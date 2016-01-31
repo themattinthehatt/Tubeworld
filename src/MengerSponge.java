@@ -1,6 +1,10 @@
 import processing.core.PApplet;
 import processing.core.PVector;
 
+/* TODO
+ * fix preset 2 to revolve around center rather than base
+ */
+
 public class MengerSponge extends Site {
   
 	// Inherits from Site class
@@ -159,44 +163,7 @@ public class MengerSponge extends Site {
 				cam.sphMoveTheta(center,PApplet.PI/1024,"center");
 				theta = cam.getTheta(center,cam.curr.loc);
 				cam.sphSetPhi(center,PApplet.PI/2+PApplet.PI/8*PApplet.sin(theta),"none");
-				
-				// allow some amount of camera control; exit if other key press after initial reset
-				// update speed multipliers
-				if (key_pressed[113]){ 
-					if (dir_mult > 2){
-						--dir_mult;
-					}
-				}
-				if (key_pressed[119]) {
-					if (dir_mult < 256){
-						++dir_mult;
-					}
-				}
-				if (key_pressed[101]) {
-					rot_rad = rot_rad*((float) 0.99);
-				}
-				if (key_pressed[114]) {
-					rot_rad = rot_rad*((float) 1.01); 
-				}
-				if (key_pressed[2]) { // move forward (inward)
-					cam.moveForward(dir_mult);
-				}
-				if (key_pressed[3]) { // move backward (outward)
-					cam.moveBackward(dir_mult);
-				}
-				if (key_pressed[122]) { // rotate ccw
-					cam.rotCCW(rot_rad);
-				}
-				if (key_pressed[120]) { // rotate cw
-					cam.rotCW(rot_rad);
-				} 
-				if (parent.keyPressed == true && !(key_pressed[2] || key_pressed[3] || key_pressed[122] || key_pressed[120] || 
-						key_pressed[113] || key_pressed[119] || key_pressed[101] || key_pressed[114])) {
-					state = 1;
-					fr_count = 0;
-				} // if keyPressed 
-			} // frameCount
-    
+			}
 		} else if (state == 3) {
 		}
 		return state;

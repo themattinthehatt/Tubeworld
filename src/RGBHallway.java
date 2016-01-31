@@ -79,20 +79,20 @@ public class RGBHallway extends Site {
 			} else if (fr_count > reset_frames) {
 				// allow some amount of camera control; exit if other key press after initial reset
 				// update speed multipliers
-				if (key_pressed[113]){ 
+				if (key_pressed[101]){ 
 					if (dir_mult > 2){
 						--dir_mult;
 					}
 				}
-				if (key_pressed[119]) {
+				if (key_pressed[114]) {
 					if (dir_mult < 256){
 						++dir_mult;
 					}
 				}
-				if (key_pressed[101]) {
+				if (key_pressed[116]) {
 					rot_rad = rot_rad*((float) 0.99);
 				}
-				if (key_pressed[114]) {
+				if (key_pressed[121]) {
 					rot_rad = rot_rad*((float) 1.01); 
 				}
 				if (key_pressed[2]) { // move forward (inward)
@@ -108,7 +108,7 @@ public class RGBHallway extends Site {
 					cam.rotCW(rot_rad);
 				} 
 				if (parent.keyPressed == true && !(key_pressed[2] || key_pressed[3] || key_pressed[122] || key_pressed[120] || 
-						key_pressed[113] || key_pressed[119] || key_pressed[101] || key_pressed[114])) {
+						key_pressed[101] || key_pressed[114] || key_pressed[116] || key_pressed[121])) {
 					state = 1;
 					fr_count = 0;
 				}

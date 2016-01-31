@@ -29,7 +29,7 @@ public class TowerGirder {
 		end_indx = -1; // adding first beam will bring this to 0
 		init_color = init_color_;
 		// initialize TowerBeam objects
-		max_num_beams = 64; // maybe make this dependent on Tower size?
+		max_num_beams = 128; // maybe make this dependent on Tower size?
 		beam = new TowerBeam[max_num_beams];	
 		for (int i = 0; i < max_num_beams; i++) {
 			beam[i] = new TowerBeam(side_width_,side_len_,0,new PVector(0,0,0),init_color_);
@@ -123,4 +123,36 @@ public class TowerGirder {
 		}
 	}
 
+	void resetGirder(boolean[][][] is_occupied, int level, int z_val, int num_beams_x, int num_beams_y,
+					 float beam_side_len, float beam_side_width) {
+		
+		// level is where we'll look for open spots in is_occupied
+		// temp variables
+		boolean valid_indices = false; 
+		int x = 0;						
+		int y = 0;
+		int z = level;
+		// loop through until valid initial indices are found
+		while (!valid_indices){
+			x = (int) parent.random((float) num_beams_x);
+			y = (int) parent.random((float) num_beams_y);
+			if (!is_occupied[x][y][z]){
+				valid_indices = true;
+			}
+		}
+		valid_indices = false;	// reset
+		
+		// don't need to fully reinitialize new TowerGirder object, just reset key variables
+		for (int i = 0; i < num_beams; i++){
+			beam[i].side_len = beam_side_len+beam_side_width;
+			beam[i].color = init_color;
+		}
+		curr_pos_x = x;
+		curr_pos_y = y;
+		curr_pos_z = z_val; // not the z variable from above; need the unmodded version
+		curr_level = level;
+		num_beams = 0;
+		beg_indx = 0;
+		end_indx = -1;
+	}
 }
