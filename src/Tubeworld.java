@@ -18,8 +18,8 @@ public class Tubeworld extends PApplet {
 	int active_site_indx;
 	
 	public static void main(String[] args) {
-//		PApplet.main(new String[] { "--present", "Tubeworld" });
-		PApplet.main(new String[] { "Tubeworld" });
+		PApplet.main(new String[] { "--present", "Tubeworld" });
+//		PApplet.main(new String[] { "Tubeworld" });
 
 	}
 	

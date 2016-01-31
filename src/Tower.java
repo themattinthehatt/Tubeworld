@@ -20,7 +20,7 @@ public class Tower extends Site {
 	int num_beams_x;			// length of x side in number of beams
 	int num_beams_y;			// length of y side in number of beams
 	float beam_side_width;		// width (~circumference) of beam  
-	float beam_side_len;		// length of beam (JUST distance between nodes; different than lenght in TowerBeam class)
+	float beam_side_len;		// length of beam (JUST distance between nodes; different than length in TowerBeam class)
 	float total_side_len_x;		// total side length along x-direction
 	float total_side_len_y; 	// total side length along y-direction
 	int num_girders;			// number of TowerGirder objects
@@ -57,8 +57,8 @@ public class Tower extends Site {
 		super(parent_,center_,rad_site_,rad_inf_,init_,reset_frames_);
 		
 		// initialize tower structure properties
-		num_beams_x = 10;
-		num_beams_y = 10;
+		num_beams_x = 5;
+		num_beams_y = 5;
 		beam_side_width = 5;
 		beam_side_len = 50;
 		total_side_len_x = ((float) num_beams_x)*beam_side_len;

@@ -18,16 +18,16 @@ void keyReleased(){
   (002) up arrow:       move forward (+shift - move up)
   (003) down arrow:     move back (+shift - move down)
   (097) a:              rotate left
-  (115) s:              rotate right
-  (100) d:              rotate up
-  (102) f:              rotate down
+  (115) d:              rotate right
+  (100) w:              rotate up
+  (102) s:              rotate down
   (122) z:              rotate ccw
   (120) x:              rotate cw
   SPEED
-  (113) q               increase forward speed
-  (119) w               decrease forward speed
-  (101) e               increase angular speed
-  (114) r               decrease angular speed
+  (113) e               increase forward speed
+  (119) r               decrease forward speed
+  (101) t               increase angular speed
+  (114) y               decrease angular speed
   STATE
   (032) space			pause updating (but not rendering)
   (008) backspace		reset
@@ -83,24 +83,24 @@ public class KeyHandler {
 			keys_pressed[8] = true;   // reset
 		}
 		// speed multipliers
-		if (parent.key == 'q') {
-			keys_pressed[113] = true;
-		} else if (parent.key == 'w') {
-			keys_pressed[119] = true;
-		} else if (parent.key == 'e') {
+		if (parent.key == 'e') {
 			keys_pressed[101] = true;
 		} else if (parent.key == 'r') {
 			keys_pressed[114] = true;
+		} else if (parent.key == 't') {
+			keys_pressed[116] = true;
+		} else if (parent.key == 'y') {
+			keys_pressed[121] = true;
 		}
 		// movement keys
 		else if (parent.key == 'a') {
 			keys_pressed[97] = true;  //rotate left
-		} else if (parent.key == 's') {
-			keys_pressed[115] = true; // rotate right
-		} else if (parent.key == 'd') { 
-			keys_pressed[100] = true; // rotate up
-		} else if (parent.key == 'f') { 
-			keys_pressed[102] = true; // rotate down
+		} else if (parent.key == 'd') {
+			keys_pressed[100] = true; // rotate right
+		} else if (parent.key == 'w') { 
+			keys_pressed[119] = true; // rotate up
+		} else if (parent.key == 's') { 
+			keys_pressed[115] = true; // rotate down
 		} else if (parent.key == 'z') { 
 			keys_pressed[122] = true; // rotate ccw
 		} else if (parent.key == 'x') { 
@@ -141,32 +141,32 @@ public class KeyHandler {
 			keys_toggled[8] = !keys_toggled[8];
 		}
 		// speed multipliers
-		if (parent.key == 'q') {
-			keys_pressed[113] = false;
-			keys_toggled[113] = !keys_toggled[113];
-		} else if (parent.key == 'w') {
-			keys_pressed[119] = false;
-			keys_toggled[119] = !keys_toggled[119];
-		} else if (parent.key == 'e') {
+		if (parent.key == 'e') {
 			keys_pressed[101] = false;
 			keys_toggled[101] = !keys_toggled[101];
 		} else if (parent.key == 'r') {
 			keys_pressed[114] = false;
 			keys_toggled[114] = !keys_toggled[114];
+		} else if (parent.key == 't') {
+			keys_pressed[116] = false;
+			keys_toggled[116] = !keys_toggled[116];
+		} else if (parent.key == 'y') {
+			keys_pressed[121] = false;
+			keys_toggled[121] = !keys_toggled[121];
 		}
 		// movement keys
 		else if (parent.key == 'a') {
 			keys_pressed[97] = false;  //rotate left
 			keys_toggled[97] = !keys_toggled[97];
-		} else if (parent.key == 's') {
-			keys_pressed[115] = false; // rotate right
-			keys_toggled[115] = !keys_toggled[115];
-		} else if (parent.key == 'd') { 
-			keys_pressed[100] = false; // rotate up
+		} else if (parent.key == 'd') {
+			keys_pressed[100] = false; // rotate right
 			keys_toggled[100] = !keys_toggled[100];
-		} else if (parent.key == 'f') { 
-			keys_pressed[102] = false; // rotate down
-			keys_toggled[102] = !keys_toggled[102];
+		} else if (parent.key == 'w') { 
+			keys_pressed[119] = false; // rotate up
+			keys_toggled[119] = !keys_toggled[119];
+		} else if (parent.key == 's') { 
+			keys_pressed[115] = false; // rotate down
+			keys_toggled[115] = !keys_toggled[115];
 		} else if (parent.key == 'z') { 
 			keys_pressed[122] = false; // rotate ccw
 			keys_toggled[122] = !keys_toggled[122];

@@ -44,20 +44,20 @@ class CamCtrl {
 		if (state == 1) { // free viewing setting
 
 			// update speed multipliers
-			if (keys_pressed[113]){ 
+			if (keys_pressed[101]){ 
 				if (dir_mult > 2){
 					--dir_mult;
 				}
 			}
-			if (keys_pressed[119]) {
+			if (keys_pressed[114]) {
 				if (dir_mult < 256){
 					++dir_mult;
 				}
 			}
-			if (keys_pressed[101]) {
+			if (keys_pressed[116]) {
 				rot_rad = rot_rad*((float) 0.99);
 			}
-			if (keys_pressed[114]) {
+			if (keys_pressed[121]) {
 				rot_rad = rot_rad*((float) 1.01); 
 			}
         
@@ -87,13 +87,13 @@ class CamCtrl {
 			if (keys_pressed[97]) { // rotate left
 				cam.rotLeft(rot_rad);
 			}
-			if (keys_pressed[115]) { // rotate right
+			if (keys_pressed[100]) { // rotate right
 				cam.rotRight(rot_rad);
 			} 
-			if (keys_pressed[100]) { // rotate up
+			if (keys_pressed[119]) { // rotate up
 				cam.rotUp(rot_rad);
 			}
-			if (keys_pressed[102]) { // rotate down
+			if (keys_pressed[115]) { // rotate down
 				cam.rotDown(rot_rad);          
 			}
 			if (keys_pressed[122]) { // rotate ccw
