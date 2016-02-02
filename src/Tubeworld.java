@@ -2,7 +2,6 @@ import processing.core.*;
 
 /* TODO
  * fix presets on Menger Sponge
- * start building tower!!
  * make F_ presets to move to specified sites
  */
 
@@ -67,7 +66,7 @@ public class Tubeworld extends PApplet {
 	public void draw(){
 
 		// note: lights have to be called before drawing takes place
-		cam_ctrl.update(key_handler.keys_pressed,sites[active_site_indx]);
+		cam_ctrl.update(key_handler.keys_pressed,key_handler.keys_toggled,sites[active_site_indx]);
 				
 		// find closest site	
 		dist_to_site[0] = 0;	// ensures we're always within radius of influence of tubeworld

@@ -107,7 +107,8 @@ public class GlassCube extends Site {
 					cam.rotCW(rot_rad);
 				} 
 				if (parent.keyPressed == true && !(key_pressed[2] || key_pressed[3] || key_pressed[122] || key_pressed[120] || 
-						key_pressed[101] || key_pressed[114] || key_pressed[116] || key_pressed[121])) {
+						key_pressed[101] || key_pressed[114] || key_pressed[116] || key_pressed[121] ||
+						key_pressed[32])) {
 					state = 1;
 					fr_count = 0;
 				} // if keyPressed 

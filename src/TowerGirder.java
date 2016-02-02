@@ -14,7 +14,8 @@ public class TowerGirder {
 	int end_indx;		// ending index for beam (treat as queue)
 	int init_color;		// initial color specification
 	TowerBeam[] beam;	// array of beam objects to create girder
-	
+
+	/************************************ CONSTRUCTOR **************************************/
 	TowerGirder(PApplet parent_,int curr_pos_x_,int curr_pos_y_,int curr_pos_z_,int init_color_,float side_width_,float side_len_){
 		// initialize from inputs
 		parent = parent_;

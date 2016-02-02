@@ -39,7 +39,7 @@ class CamCtrl {
   }
   
 	/*************************** UPDATE CAMERA LOCATION AND SCENE CENTER ***********************/
-	int update(boolean[] keys_pressed, Site active_site) {
+	int update(boolean[] keys_pressed, boolean[] keys_toggled, Site active_site) {
 
 		if (state == 1) { // free viewing setting
 

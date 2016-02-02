@@ -3,7 +3,6 @@ import processing.core.PVector;
 
 /* TODO
  * camera presets
- * don't force movement upwards
  */
 
 public class Tower extends Site {
@@ -25,6 +24,7 @@ public class Tower extends Site {
 	float total_side_len_y; 	// total side length along y-direction
 	int num_girders;			// number of TowerGirder objects
 	TowerGirder[] girder; 		// array of girder objects to draw
+	float fr_count;				// keep track of extending and pausing beams
 	
 	// for collision detection
 	boolean[][][] is_occupied;	// logical array for collision detection
@@ -50,10 +50,14 @@ public class Tower extends Site {
 	// camera updates
 	float beam_extend_frames; 	// number of frames needed for extension of beam
 	float beam_pause_frames;	// number of frames paused during beam extensions
-	float fr_count;				// frame counter
+	float cam_fr_count;			// frame counter
 	float dir_mult;				// speed multiplier for linear movement	
 	float rot_rad;				// angle for rotational movements
+	CamParam preset_cam;		// for camera updates
+	PVector cam_center;			// coordinates for center of scene to use for updating preset_cam 
+	float top_level_extending;	// frame count for camera updates
 	
+	/************************************ CONSTRUCTOR ***************************************/
 	Tower(PApplet parent_, PVector center_, float rad_site_, float rad_inf_, CamParam init_, int reset_frames_){
 		// pass arguments to parent constructor
 		super(parent_,center_,rad_site_,rad_inf_,init_,reset_frames_);
@@ -67,6 +71,11 @@ public class Tower extends Site {
 		total_side_len_y = ((float) num_beams_y)*beam_side_len;
 		num_girders = 3;
 		girder = new TowerGirder[num_girders];
+		// reset parts of init to be at the center, given the number of beams
+		init.loc = new PVector(center.x+((float) num_beams_x)*beam_side_len/2,center.y+((float) num_beams_y)*beam_side_len/2,center.z+600);
+		init.sc  = new PVector(center.x+((float) num_beams_x)*beam_side_len/2,center.y+((float) num_beams_y)*beam_side_len/2,center.z);;
+		init.dir = new PVector(0,0,-1);
+		init.down = new PVector(0,-1,0);
 		
 		// initialize logical array for collision detection
 		trans_probs = new float[4];
@@ -118,7 +127,19 @@ public class Tower extends Site {
 		beam_extend_frames = 10;
 		beam_pause_frames = 1;
 		fr_count = 0;
-				
+		// CamParam object
+		/*
+		CamParam preset_cam;     // initial camera dir,loc,sc and down for camera presets
+	    PVector dir;             // xyz coordinates of direction vector
+	    PVector loc;             // xyz coordinates of camera
+	    PVector sc;              // xyz coordinates of scene center
+	    PVector down;            // xyz coordinates of downward direction of camera
+	    */
+		cam_center = new PVector(center.x+total_side_len_x/2,center.y+total_side_len_y/2,center.z);
+		preset_cam = new CamParam(new PVector(-1,0,0), 
+					 new PVector(center.x+2*total_side_len_x,center.y+total_side_len_y/2,center.z+500),
+					 new PVector(center.x+total_side_len_x/2,center.y+total_side_len_y/2,center.z),
+					 new PVector(0,0,-1));		
 	}
   
 	/************************************ UPDATE PHYSICS ************************************/
@@ -138,6 +159,13 @@ public class Tower extends Site {
 						// at end of extending phase
 						is_extending_beam = false;	// begin paused at node phase on next draw command
 						fr_count = 0;				// reset frame count
+					}
+					// update camera center if necessary
+					if (top_level_extending > 0){
+						cam_center.z = cam_center.z + beam_side_len/beam_extend_frames;
+						preset_cam.loc.z = preset_cam.loc.z + beam_side_len/beam_extend_frames;
+						preset_cam.sc.z = preset_cam.sc.z + beam_side_len/beam_extend_frames;
+						top_level_extending--;
 					}
 				} // end frame_count check 
 			} else {
@@ -187,7 +215,7 @@ public class Tower extends Site {
 			} else if (update_type == 1) {
 				curr_level = girder[i].curr_level;
 				
-				// if top level is right below current top level, force upwards
+				// if top level is right below current top level, force upwards to make room
 				if (curr_level == (temp_top_level+1) % num_levels){
 					curr_level = (curr_level+1) % num_levels;	// reassign curr_level
 					
@@ -230,10 +258,14 @@ public class Tower extends Site {
 				}
 			}
 		} // end girder loop
-		
+		if (temp_top_level != top_level){
+			// we've moved up; set flag so we can increase center for cam preset
+			top_level_extending = beam_extend_frames;
+		}
 		top_level = temp_top_level; // finally update top_level
 	}
 
+	/************************************ ADD BEAM HELPER ***********************************/	
 	void findVacantSpot(int i){
 		// i is index into girder array
 		// top_level (update_type = 0) or curr_level (update_type = 1)
@@ -360,23 +392,30 @@ public class Tower extends Site {
 		
 		parent.popMatrix();
 	}
-  
-	/************************************ UPDATE CAMERA *************************************/
-	
+  	
+	/************************************ UPDATE CAM ****************************************/	
 	int updateCam(Cam cam, int state, boolean[] key_pressed){
 		if (state == 0) { // reset mode
 			state = cam.smoothLinPursuit(init,reset_frames,0,1); // calling state, return state
 		} else if (state == 2) { // roller coaster mode
-			float theta;
-			if (fr_count <= reset_frames) {
-				state = cam.smoothSphPursuit(init,center,reset_frames,2,2);    
-				fr_count++;
+			if (cam_fr_count == 0) {
 				dir_mult = 5;
 				rot_rad = PApplet.PI/246;
-			} else if (fr_count > reset_frames) {
-				cam.sphMoveTheta(center,PApplet.PI/1024,"center");
-				theta = cam.getTheta(center,cam.curr.loc);
-				cam.sphSetPhi(center,PApplet.PI/2+PApplet.PI/8*PApplet.sin(theta),"none");
+			}
+			if (cam_fr_count <= reset_frames-1){
+				state = cam.smoothLinPursuit(preset_cam,reset_frames,2,2);    
+				cam_fr_count++;
+			} else if (cam_fr_count >= reset_frames) {
+				
+				// shift upwards if beams are moving upwards
+				if (top_level_extending > 0){
+					cam.curr.loc.z = cam.curr.loc.z + beam_side_len/beam_extend_frames;
+					cam.curr.sc.z = cam.curr.sc.z + beam_side_len/beam_extend_frames;
+				}
+				
+				// rotate
+				cam.sphMoveTheta(cam_center,PApplet.PI/1024,"center");
+				cam_fr_count++;
 				
 				// allow some amount of camera control; exit if other key press after initial reset
 				// update speed multipliers
@@ -390,28 +429,16 @@ public class Tower extends Site {
 						++dir_mult;
 					}
 				}
-				if (key_pressed[116]) {
-					rot_rad = rot_rad*((float) 0.99);
-				}
-				if (key_pressed[121]) {
-					rot_rad = rot_rad*((float) 1.01); 
-				}
 				if (key_pressed[2]) { // move forward (inward)
 					cam.moveForward(dir_mult);
 				}
 				if (key_pressed[3]) { // move backward (outward)
 					cam.moveBackward(dir_mult);
-				}
-				if (key_pressed[122]) { // rotate ccw
-					cam.rotCCW(rot_rad);
-				}
-				if (key_pressed[120]) { // rotate cw
-					cam.rotCW(rot_rad);
 				} 
-				if (parent.keyPressed == true && !(key_pressed[2] || key_pressed[3] || key_pressed[122] || key_pressed[120] || 
-						key_pressed[101] || key_pressed[114] || key_pressed[116] || key_pressed[121])) {
+				if (parent.keyPressed == true && !(key_pressed[2] || key_pressed[3] || 
+						key_pressed[101] || key_pressed[114] || key_pressed[32])) {
 					state = 1;
-					fr_count = 0;
+					cam_fr_count = 0;
 				} // if keyPressed 
 			} // frameCount
     
@@ -420,7 +447,6 @@ public class Tower extends Site {
 		return state;
 	}
   
-	
 	/************************************ RESET *********************************************/
 	void resetTower(){
 		
@@ -446,6 +472,13 @@ public class Tower extends Site {
 		// reinitialize state variables
 		is_extending_beam = false;	// will begin with pause period, and a new beam will be added to each girder
 		fr_count = 0;
+		
+		// reinitialize cam presets
+		cam_fr_count = 0;
+		cam_center = new PVector(center.x+total_side_len_x/2,center.y+total_side_len_y/2,center.z);
+		preset_cam = new CamParam(new PVector(-1,0,0), 
+					 new PVector(center.x+2*total_side_len_x,center.y+total_side_len_y/2,cam_center.z+500),
+					 cam_center,
+					 new PVector(0,0,-1));
 	}
-
 }
