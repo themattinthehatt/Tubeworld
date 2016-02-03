@@ -1,15 +1,15 @@
 *.class
 *~
 Notes.txt
-.idea
-.classpath
-.project
+.idea/
+Tubeworld.iml
+bin/
 
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
 
 # Package Files #
-*.jar
+# *.jar
 *.war
 *.ear
 
