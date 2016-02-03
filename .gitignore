@@ -1,7 +1,7 @@
 *.class
 *~
 Notes.txt
-.idea
+.idea/
 Tubeworld.iml
 bin/
 
@@ -9,7 +9,7 @@ bin/
 .mtj.tmp/
 
 # Package Files #
-*.jar
+# *.jar
 *.war
 *.ear
 
