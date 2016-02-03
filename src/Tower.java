@@ -36,7 +36,6 @@ public class Tower extends Site {
 	int z;						// temp z location in is_occupied
 	int curr_level;				// temp level in is_occupied
 	int color;					// temp color for creation of new beams
-	int[] girder_order;			// specify order in which to access girders
 	int top_level;				// top level (highest among girders) in is_occupied
 	int temp_top_level;			// temp top level; necessary so that multiple girders don't move up unnecessarily on same iteration
 	int temp_top_level_z;		// z-value of temp_top_level, for resets
@@ -45,8 +44,7 @@ public class Tower extends Site {
 	
 	// state variables
 	boolean is_extending_beam;	// beam should extend on this frame; if false, updating logic
-	boolean reset;				// resets tower
-	
+
 	// camera updates
 	float beam_extend_frames; 	// number of frames needed for extension of beam
 	float beam_pause_frames;	// number of frames paused during beam extensions
