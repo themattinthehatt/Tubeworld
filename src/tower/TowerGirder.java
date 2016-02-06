@@ -1,22 +1,24 @@
+package tower;
+
 import processing.core.PApplet;
 import processing.core.PVector;
 
 public class TowerGirder {
-	
-	PApplet parent; 	// parent
-	int curr_pos_x; 	// position of current beam object in int space
-	int curr_pos_y; 	// position of current beam object in int space
-	int curr_pos_z; 	// position of current beam object in int space
-	int curr_level;		// level in logic array (modded version of curr_pos_z)
-	int max_num_beams;	// maximum number of beams; preallocate
-	int num_beams;		// current number of beams
-	int beg_indx;		// beginning index for beam (treat as queue)
-	int end_indx;		// ending index for beam (treat as queue)
-	int init_color;		// initial color specification
-	TowerBeam[] beam;	// array of beam objects to create girder
+
+	public PApplet parent; 	// parent
+	public int curr_pos_x; 	// position of current beam object in int space
+	public int curr_pos_y; 	// position of current beam object in int space
+	public int curr_pos_z; 	// position of current beam object in int space
+	public int curr_level;		// level in logic array (modded version of curr_pos_z)
+	public int max_num_beams;	// maximum number of beams; preallocate
+	public int num_beams;		// current number of beams
+	public int beg_indx;		// beginning index for beam (treat as queue)
+	public int end_indx;		// ending index for beam (treat as queue)
+	public int init_color;		// initial color specification
+	public TowerBeam[] beam;	// array of beam objects to create girder
 
 	/************************************ CONSTRUCTOR **************************************/
-	TowerGirder(PApplet parent_,int curr_pos_x_,int curr_pos_y_,int curr_pos_z_,int init_color_,float side_width_,float side_len_){
+	public TowerGirder(PApplet parent_,int curr_pos_x_,int curr_pos_y_,int curr_pos_z_,int init_color_,float side_width_,float side_len_){
 		// initialize from inputs
 		parent = parent_;
 		// integer index into logical collision detection array
@@ -29,15 +31,15 @@ public class TowerGirder {
 		beg_indx = 0;
 		end_indx = -1; // adding first beam will bring this to 0
 		init_color = init_color_;
-		// initialize TowerBeam objects
-		max_num_beams = 128; // maybe make this dependent on Tower size?
+		// initialize tower.TowerBeam objects
+		max_num_beams = 128; // maybe make this dependent on tower.Tower size?
 		beam = new TowerBeam[max_num_beams];	
 		for (int i = 0; i < max_num_beams; i++) {
 			beam[i] = new TowerBeam(side_width_,side_len_,0,new PVector(0,0,0),init_color_);
 		}
 	}
-	
-	void drawGirder(){
+
+	public void drawGirder(){
 		// iterate through beams
 		for (int i = 0; i < num_beams; i++){
 			parent.pushMatrix();
@@ -55,8 +57,8 @@ public class TowerGirder {
 			parent.popMatrix();
 		}
 	}
-	
-	void addBeam(int update_dir){
+
+	public void addBeam(int update_dir){
 		
 		// add beam to end of beam array queue
 		end_indx = (end_indx+1) % max_num_beams;
@@ -95,8 +97,8 @@ public class TowerGirder {
 		beam[end_indx].color = init_color;
 
 	}
-	
-	void updateBeam(float beam_extend_frames, float desired_length){
+
+	public void updateBeam(float beam_extend_frames, float desired_length){
 		// update length of beam while expanding; direction depends on orientation
 		
 		/* add proportion of desired length that depends on number of frames used to extend beam;
@@ -124,7 +126,7 @@ public class TowerGirder {
 		}
 	}
 
-	void resetGirder(boolean[][][] is_occupied, int level, int z_val, int num_beams_x, int num_beams_y,
+	public void resetGirder(boolean[][][] is_occupied, int level, int z_val, int num_beams_x, int num_beams_y,
 					 float beam_side_len, float beam_side_width) {
 		
 		// level is where we'll look for open spots in is_occupied
@@ -143,7 +145,7 @@ public class TowerGirder {
 		}
 		valid_indices = false;	// reset
 		
-		// don't need to fully reinitialize new TowerGirder object, just reset key variables
+		// don't need to fully reinitialize new tower.TowerGirder object, just reset key variables
 		for (int i = 0; i < num_beams; i++){
 			beam[i].side_len = beam_side_len+beam_side_width;
 			beam[i].color = init_color;

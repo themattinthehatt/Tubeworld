@@ -1,4 +1,4 @@
-/* KeyHandler is a static class that allows updates from multiple keys simultaneously, even
+/* core.KeyHandler is a static class that allows updates from multiple keys simultaneously, even
 though Processing only registers a single keyPressed event per frame
 
 IMPORTANT: must include the following functions outside of the setup and draw functions:
@@ -34,25 +34,27 @@ void keyReleased(){
   PRESETS
   (048) 0               reset
   (049) 1               free viewing (default)
-  (050) 2               preset 1 (defined in classes derived from Site class)
-  (051) 3               preset 2 (defined in classes derived from Site class)
+  (050) 2               preset 1 (defined in classes derived from core.Site class)
+  (051) 3               preset 2 (defined in classes derived from core.Site class)
 */
 
 /* TODO
  * would be nice to use KeyEvent values to index keys_pressed and keys_toggled arrays; how to mix
  * this with parent.key?
  */
+
+package core;
 import processing.core.PApplet;
 import java.awt.event.KeyEvent;
 
 public class KeyHandler {
   
-	PApplet parent; 		// parent PApplet, for 
-	boolean[] keys_pressed;	// keep track of key presses
-	boolean[] keys_toggled;	// keep track of key toggles
+	public PApplet parent; 		// parent PApplet, for
+	public boolean[] keys_pressed;	// keep track of key presses
+	public boolean[] keys_toggled;	// keep track of key toggles
   
 	/*************************************** CONSTRUCTOR ************************************/
-	KeyHandler(PApplet parent_){
+	public KeyHandler(PApplet parent_){
 		// parent PApplet
 		parent = parent_;
 		// boolean defaults to false, but explicitly initialize anyway
@@ -65,7 +67,7 @@ public class KeyHandler {
 	}
 
 	/**************************** UPDATE NEWLY PRESSSED KEY *********************************/
-	void key_pressed() {
+	public void key_pressed() {
 		
 		if (parent.keyCode == KeyEvent.VK_UP) {  
 			keys_pressed[2] = true;   // move forward
@@ -116,7 +118,7 @@ public class KeyHandler {
   
   
 	/**************************** UPDATE NEWLY RELEASED KEY *********************************/
-	void key_released() {
+	public void key_released() {
 		// key will be toggled upon release
 		if (parent.keyCode == KeyEvent.VK_UP) {  
 			keys_pressed[2] = false;   // move forward

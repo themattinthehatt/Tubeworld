@@ -1,3 +1,9 @@
+package tower;
+
+import core.Cam;
+import core.CamParam;
+import core.Site;
+
 import processing.core.PApplet;
 import processing.core.PVector;
 
@@ -7,7 +13,7 @@ import processing.core.PVector;
 
 public class Tower extends Site {
 	
-	// Inherits from Site class
+	// Inherits from core.Site class
 	// parent, Tubeworld PApplet
 	// center
 	// rad_site
@@ -16,47 +22,47 @@ public class Tower extends Site {
 	// reset_frames
 	 
 	// for overall tower structure
-	int num_beams_x;			// length of x side in number of beams
-	int num_beams_y;			// length of y side in number of beams
-	float beam_side_width;		// width (~circumference) of beam  
-	float beam_side_len;		// length of beam (JUST distance between nodes; different than length in TowerBeam class)
-	float total_side_len_x;		// total side length along x-direction
-	float total_side_len_y; 	// total side length along y-direction
-	int num_girders;			// number of TowerGirder objects
-	TowerGirder[] girder; 		// array of girder objects to draw
-	float fr_count;				// keep track of extending and pausing beams
+	public int num_beams_x;			// length of x side in number of beams
+	public int num_beams_y;			// length of y side in number of beams
+	public float beam_side_width;		// width (~circumference) of beam
+	public float beam_side_len;		// length of beam (JUST distance between nodes; different than length in tower.TowerBeam class)
+	public float total_side_len_x;		// total side length along x-direction
+	public float total_side_len_y; 	// total side length along y-direction
+	public int num_girders;			// number of tower.TowerGirder objects
+	public TowerGirder[] girder; 		// array of girder objects to draw
+	public float fr_count;				// keep track of extending and pausing beams
 	
 	// for collision detection
-	boolean[][][] is_occupied;	// logical array for collision detection
-	float num_poss_pos;			// keep track of number of possible positions to later determine trans_probs
-	float[] trans_probs;		// 0 +x; 1 -x; 2 +y; 3 -y;
-	float rand;					// random number for determining location of new beams
-	int x;						// temp x location in is_occupied
-	int y;						// temp y location in is_occupied
-	int z;						// temp z location in is_occupied
-	int curr_level;				// temp level in is_occupied
-	int color;					// temp color for creation of new beams
-	int top_level;				// top level (highest among girders) in is_occupied
-	int temp_top_level;			// temp top level; necessary so that multiple girders don't move up unnecessarily on same iteration
-	int temp_top_level_z;		// z-value of temp_top_level, for resets
-	int num_levels;				// maximum number of levels to store in is_occupied
-	int update_type;			// 0 for forcing beams upward at same rate, 1 for death and respawning
+	public boolean[][][] is_occupied;	// logical array for collision detection
+	public float num_poss_pos;			// keep track of number of possible positions to later determine trans_probs
+	public float[] trans_probs;		// 0 +x; 1 -x; 2 +y; 3 -y;
+	public float rand;					// random number for determining location of new beams
+	public int x;						// temp x location in is_occupied
+	public int y;						// temp y location in is_occupied
+	public int z;						// temp z location in is_occupied
+	public int curr_level;				// temp level in is_occupied
+	public int color;					// temp color for creation of new beams
+	public int top_level;				// top level (highest among girders) in is_occupied
+	public int temp_top_level;			// temp top level; necessary so that multiple girders don't move up unnecessarily on same iteration
+	public int temp_top_level_z;		// z-value of temp_top_level, for resets
+	public int num_levels;				// maximum number of levels to store in is_occupied
+	public int update_type;			// 0 for forcing beams upward at same rate, 1 for death and respawning
 	
 	// state variables
-	boolean is_extending_beam;	// beam should extend on this frame; if false, updating logic
+	public boolean is_extending_beam;	// beam should extend on this frame; if false, updating logic
 
 	// camera updates
-	float beam_extend_frames; 	// number of frames needed for extension of beam
-	float beam_pause_frames;	// number of frames paused during beam extensions
-	float cam_fr_count;			// frame counter
-	float dir_mult;				// speed multiplier for linear movement	
-	float rot_rad;				// angle for rotational movements
-	CamParam preset_cam;		// for camera updates
-	PVector cam_center;			// coordinates for center of scene to use for updating preset_cam 
-	float top_level_extending;	// frame count for camera updates
+	public float beam_extend_frames; 	// number of frames needed for extension of beam
+	public float beam_pause_frames;	// number of frames paused during beam extensions
+	public float cam_fr_count;			// frame counter
+	public float dir_mult;				// speed multiplier for linear movement
+	public float rot_rad;				// angle for rotational movements
+	public CamParam preset_cam;		// for camera updates
+	public PVector cam_center;			// coordinates for center of scene to use for updating preset_cam
+	public float top_level_extending;	// frame count for camera updates
 	
 	/************************************ CONSTRUCTOR ***************************************/
-	Tower(PApplet parent_, PVector center_, float rad_site_, float rad_inf_, CamParam init_, int reset_frames_){
+	public Tower(PApplet parent_, PVector center_, float rad_site_, float rad_inf_, CamParam init_, int reset_frames_){
 		// pass arguments to parent constructor
 		super(parent_,center_,rad_site_,rad_inf_,init_,reset_frames_);
 		
@@ -77,7 +83,7 @@ public class Tower extends Site {
 		
 		// initialize logical array for collision detection
 		trans_probs = new float[4];
-		top_level = 0;		// current "top_level" in is_occupied; should be matched in initialization of TowerGirder
+		top_level = 0;		// current "top_level" in is_occupied; should be matched in initialization of tower.TowerGirder
 		temp_top_level_z = 0;
 		num_levels = 5; 	// total number of levels to keep track of; will be used in a modular manner
 		update_type = 0; 	// 0 for forcing beams upward at same rate, 1 for death and respawning, which needs more num_levels 
@@ -90,7 +96,7 @@ public class Tower extends Site {
 			}
 		}
 				
-		// initialize TowerGirder objects
+		// initialize tower.TowerGirder objects
 		boolean valid_indices = false; 
 		for (int i = 0; i < num_girders; i++){
 			// loop through until valid initial indices are found
@@ -114,7 +120,7 @@ public class Tower extends Site {
 			} else if (i%3 == 2){
 				color = parent.color(0,0,255);
 			}
-			// initialize new TowerGirder object
+			// initialize new tower.TowerGirder object
 			girder[i] = new TowerGirder(parent_,x,y,z,color,beam_side_width,beam_side_len);
 		}
 		
@@ -125,23 +131,23 @@ public class Tower extends Site {
 		beam_extend_frames = 10;
 		beam_pause_frames = 1;
 		fr_count = 0;
-		// CamParam object
+		// core.CamParam object
 		/*
-		CamParam preset_cam;     // initial camera dir,loc,sc and down for camera presets
+		core.CamParam preset_cam;     // initial camera dir,loc,sc and down for camera presets
 	    PVector dir;             // xyz coordinates of direction vector
 	    PVector loc;             // xyz coordinates of camera
 	    PVector sc;              // xyz coordinates of scene center
 	    PVector down;            // xyz coordinates of downward direction of camera
 	    */
 		cam_center = new PVector(center.x+total_side_len_x/2,center.y+total_side_len_y/2,center.z);
-		preset_cam = new CamParam(new PVector(-1,0,0), 
+		preset_cam = new CamParam(new PVector(-1,0,0),
 					 new PVector(center.x+2*total_side_len_x,center.y+total_side_len_y/2,center.z+500),
 					 new PVector(center.x+total_side_len_x/2,center.y+total_side_len_y/2,center.z),
 					 new PVector(0,0,-1));		
 	}
   
 	/************************************ UPDATE PHYSICS ************************************/
-	void updatePhysics(boolean [] keys_pressed, boolean[] keys_toggled){
+	public void updatePhysics(boolean [] keys_pressed, boolean[] keys_toggled){
 		
 		// to see if updates should be paused
 		if (!keys_toggled[32]){ 
@@ -183,7 +189,7 @@ public class Tower extends Site {
 	}
   
 	/************************************ ADD BEAM ******************************************/
-	void addBeamToGirders() {
+	public void addBeamToGirders() {
 		// iterate through girders and find next spot to move to 
 		/* temp_top_level allows girders updated after another girder was forced upwards on this iteration
 		 * to continue updating on the level below; updating the top_level after all girder updates will
@@ -263,8 +269,8 @@ public class Tower extends Site {
 		top_level = temp_top_level; // finally update top_level
 	}
 
-	/************************************ ADD BEAM HELPER ***********************************/	
-	void findVacantSpot(int i){
+	/************************************ ADD BEAM HELPER ***********************************/
+	public void findVacantSpot(int i){
 		// i is index into girder array
 		// top_level (update_type = 0) or curr_level (update_type = 1)
 
@@ -370,7 +376,7 @@ public class Tower extends Site {
 	}
 	
 	/************************************ DRAW SITE *****************************************/
-	void drawSite(){
+	public void drawSite(){
 		
 		parent.pushMatrix();
 		parent.translate(center.x, center.y, center.z);
@@ -391,8 +397,8 @@ public class Tower extends Site {
 		parent.popMatrix();
 	}
   	
-	/************************************ UPDATE CAM ****************************************/	
-	int updateCam(Cam cam, int state, boolean[] key_pressed){
+	/************************************ UPDATE CAM ****************************************/
+	public int updateCam(Cam cam, int state, boolean[] key_pressed){
 		if (state == 0) { // reset mode
 			state = cam.smoothLinPursuit(init,reset_frames,0,1); // calling state, return state
 		} else if (state == 2) { // roller coaster mode
@@ -446,7 +452,7 @@ public class Tower extends Site {
 	}
   
 	/************************************ RESET *********************************************/
-	void resetTower(){
+	public void resetTower(){
 		
 		// reinitialize logical array for collision detection
 		top_level = 0;	// current "top_level" in is_occupied
@@ -459,7 +465,7 @@ public class Tower extends Site {
 			}
 		}
 				
-		// reinitialize TowerGirder objects
+		// reinitialize tower.TowerGirder objects
 		for (int i = 0; i < num_girders; i++){
 			girder[i].resetGirder(is_occupied,0,temp_top_level_z,num_beams_x,num_beams_y,
 								  beam_side_len,beam_side_width);

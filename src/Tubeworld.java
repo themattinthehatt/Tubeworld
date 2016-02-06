@@ -1,5 +1,16 @@
 import processing.core.*;
 
+import core.CamCtrl;
+import core.CamParam;
+import core.KeyHandler;
+import core.Site;
+
+import nightworld.NightWorld;
+import rgbhallway.RGBHallway;
+import glasscube.GlassCube;
+import mengersponge.MengerSponge;
+import tower.Tower;
+
 /* TODO
  * fix presets on Menger Sponge
  * make F_ presets to move to specified sites
@@ -7,14 +18,14 @@ import processing.core.*;
 
 public class Tubeworld extends PApplet {
 
-	KeyHandler key_handler;
-	CamParam cam_init;
-	CamCtrl cam_ctrl;
-	Site[] sites;
-	int num_sites;
-	float[] dist_to_site;
-	float min_dist;
-	int active_site_indx;
+	public KeyHandler key_handler;
+	public CamParam cam_init;
+	public CamCtrl cam_ctrl;
+	public Site[] sites;
+	public int num_sites;
+	public float[] dist_to_site;
+	public float min_dist;
+	public int active_site_indx;
 	
 	public static void main(String[] args) {
 //		PApplet.main(new String[] { "--present", "Tubeworld" });
@@ -40,18 +51,18 @@ public class Tubeworld extends PApplet {
 		 /* PVector center;          // center of site
 		  float rad_site;            // approximate radius of site
 		  float rad_inf;             // radius of influence of site
-		  CamParam init;             // initial camera dir,loc,sc and down for camera presets
+		  core.CamParam init;             // initial camera dir,loc,sc and down for camera presets
 		    PVector dir;             // xyz coordinates of direction vector
 		    PVector loc;             // xyz coordinates of camera
 		    PVector sc;              // xyz coordinates of scene center
 		    PVector down;            // xyz coordinates of downward direction of camera
 		  int reset_frames;          // number of frames for resetting camera loc when inside radius of influence
 		 */
-		  sites[0] = new NightWorld(this,new PVector(0,0,0), 5000, 100000, 
+		  sites[0] = new NightWorld(this,new PVector(0,0,0), 5000, 100000,
 		                             new CamParam(new PVector(-1,0,0),new PVector(600,0,0),new PVector(0,0,0),new PVector(0,0,-1)), 120);
-		  sites[1] = new GlassCube(this,new PVector(1000,1000,0), 400, 10000, 
+		  sites[1] = new GlassCube(this,new PVector(1000,1000,0), 400, 10000,
 		                             new CamParam(new PVector(-1,0,0),new PVector(1600,1000,0),new PVector(1000,1000,0),new PVector(0,0,-1)), 120);
-		  sites[2] = new RGBHallway(this,new PVector(-1000,-1000,0), 400, 10000, 
+		  sites[2] = new RGBHallway(this,new PVector(-1000,-1000,0), 400, 10000,
 		                             new CamParam(new PVector(-1,0,0),new PVector(-1000,-1000,0),new PVector(-1200,-1000,0),new PVector(0,0,-1)), 120);
 		  sites[3] = new MengerSponge(this,new PVector(-2000,2000,0), 500, 10000,
 				  					 new CamParam(new PVector(0,1,0),new PVector(-1730,1500,270),new PVector(-1730,2000,270),new PVector(0,0,-1)), 120);

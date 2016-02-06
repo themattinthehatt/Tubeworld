@@ -1,74 +1,75 @@
-/* Cam is a class used for updating camera dir, loc, sc and down using primitive camera movements. 
-The Cam object can then be used by the CamCtrl object or various Site objects
+/* core.Cam is a class used for updating camera dir, loc, sc and down using primitive camera movements.
+The core.Cam object can then be used by the CamCtrl object or various core.Site objects
 to facilitate quick development of custom preprogrammed camera behaviors.
 */
 
+package core;
 import processing.core.PVector;
 import processing.core.PApplet;
 
 public class Cam {
-  
-	CamParam curr;    // current values for camera dir, loc, sc, and down
-	CamParam update;  // update values for camera dir, loc, sc, and down
-	float r;
-	float theta;
-	float phi;
-	float dr;   // update value for radius
-	float dtheta; // update value for theta
-	float dphi; // update value for phi
-	int fr_count;     // frame counter for more complicated movements
+
+	public CamParam curr;    // current values for camera dir, loc, sc, and down
+	public 	CamParam update;  // update values for camera dir, loc, sc, and down
+	public float r;
+	public float theta;
+	public float phi;
+	public float dr;   // update value for radius
+	public float dtheta; // update value for theta
+	public float dphi; // update value for phi
+	public int fr_count;     // frame counter for more complicated movements
   
 	// Constructor Method
-	Cam(CamParam curr_) {
+	public Cam(CamParam curr_) {
 		curr = curr_;
 		update = new CamParam(new PVector(0,0,0),new PVector(0,0,0),new PVector(0,0,0),new PVector(0,0,0));
 		fr_count = 0;
 	}
   
 	/* methods for camera manipulation
-  	NOTE: CamParam object update should ONLY be used AFTER assigning it a value; never use values
+  	NOTE: core.CamParam object update should ONLY be used AFTER assigning it a value; never use values
   	fed into it.
 	 */
   
 	/******************************** ORIGIN: CURRENT LOCATION ********************************/
   
 	/**************** DISPLACEMENTS **********************/
-	void moveForward(float dist){
+	public void moveForward(float dist){
 		curr.dir.mult(dist);                                       // update distance moved
 		curr.loc.add(curr.dir);                                    // move forward in dir direction
 		curr.sc.add(curr.dir);                                     // update scene center
 		curr.dir.normalize();                                      // return dir to unit vector
 	}
-	void moveBackward(float dist){
+	public void moveBackward(float dist){
 		curr.dir.mult(dist);                                       // update distance moved
 		curr.loc.sub(curr.dir);                                    // move backward in dir direction
 		curr.sc.sub(curr.dir);                                     // update scene center
 		curr.dir.normalize();                                      // return dir to unit vector
 	}
-	void moveUpward(float dist){
+	public void moveUpward(float dist){
 		update.loc = PVector.mult(curr.down,dist);                 // update distance moved
 		curr.loc.sub(update.loc);                                  // move upward in negative down direction
 		curr.sc.sub(update.loc);                                   // update scene center
 	}
-	void moveDownward(float dist){
+	public void moveDownward(float dist){
 		update.loc = PVector.mult(curr.down,dist);                 // update distance moved
 		curr.loc.add(update.loc);                                  // move upward in negative down direction
 		curr.sc.add(update.loc);                                   // update scene center
 	}
-	void panLeft(float dist){
+	public void panLeft(float dist){
 		update.dir = PVector.cross(curr.down,curr.dir,update.dir); // get vector pointing left
 		update.dir.mult(dist);                                     // update distance moved
 		curr.loc.add(update.dir);                                  // move sideways in update.dir direction
 		curr.sc.add(update.dir);                                   // update scene center
 	}
-	void panRight(float dist){
+	public void panRight(float dist){
 		update.dir = PVector.cross(curr.down,curr.dir,update.dir); // get vector pointing left
 		update.dir.mult(dist);                                     // update distance moved
 		curr.loc.sub(update.dir);                                  // move sideways opposite to update.dir direction
 		curr.sc.sub(update.dir);                                   // update scene center
 	}
 	/***************** ROTATIONS ***********************/
-	void rotLeft(float rads){
+	public void rotLeft(float rads){
 		// update direction vector
 		update.dir = PVector.cross(curr.down,curr.dir,update.dir); // get vector pointing left
 		update.dir.mult(PApplet.tan(rads));                        // update rotation by rads
@@ -82,7 +83,7 @@ public class Cam {
 		
 		// no need to update down vector
 	}
-	void rotRight(float rads){
+	public void rotRight(float rads){
 		// update direction vector
 		update.dir = PVector.cross(curr.down,curr.dir,update.dir); // get vector pointing left
 		update.dir.mult(-PApplet.tan(rads));                       // update rotation by rads, make vector point right
@@ -96,7 +97,7 @@ public class Cam {
 		
 		// no need to update down vector
 	}
-	void rotUp(float rads){
+	public void rotUp(float rads){
 		// update direction vector
 		update.dir = PVector.mult(curr.down,-1,update.dir);        // get vector pointing up 
 		update.dir.mult(PApplet.tan(rads));                        // update rotation by rads
@@ -114,7 +115,7 @@ public class Cam {
 		curr.down.add(update.down);                                // update down vector 
 		curr.down.normalize();                                     // return down to unit vector
 	}
-	void rotDown(float rads){
+	public void rotDown(float rads){
 		// update direction vector
 		update.dir = PVector.mult(curr.down,1,update.dir);         // get vector pointing down 
 		update.dir.mult(PApplet.tan(rads));                        // update rotation by rads
@@ -132,7 +133,7 @@ public class Cam {
 		curr.down.add(update.down);                                // update down vector 
 		curr.down.normalize();                                     // return down to unit vector
 	}
-	void rotCCW(float rads){
+	public void rotCCW(float rads){
 		// no need to update direction vector
 		// no need to update scene center
 		// update down vector
@@ -141,7 +142,7 @@ public class Cam {
 		curr.down.add(update.down);                                  // update direction vector
 		curr.down.normalize();                                       // return down to unit vector
 	}
-	void rotCW(float rads){
+	public void rotCW(float rads){
 		// no need to update direction vector
 		// no need to update scene center
 		// update down vector
@@ -155,7 +156,7 @@ public class Cam {
   
   
 	/******************************** ORIGIN: SITE CENTER *************************************/
-	void sphMoveRadius(PVector center, float dr_, String sc_update){
+	public void sphMoveRadius(PVector center, float dr_, String sc_update){
 		/* sc_update: 
           	center - scene center is same as center
           	ahead - scene center is straight ahead, changes with dir vector
@@ -184,11 +185,11 @@ public class Cam {
 		}
     
 	}
-	void sphSetRadius(PVector center, float r_, String sc_update){
+	public void sphSetRadius(PVector center, float r_, String sc_update){
 		r = getRadius(center,curr.loc);
 		sphMoveRadius(center,r_-r,sc_update);
-	} 
-	void sphMoveTheta(PVector center, float dtheta_, String sc_update){
+	}
+	public void sphMoveTheta(PVector center, float dtheta_, String sc_update){
 		/* sc_update: 
           	center - scene center is same as center
           	ahead - scene center is straight ahead, changes with dir vector
@@ -218,11 +219,11 @@ public class Cam {
 			case "none":
 		}   
 	}
-	void sphSetTheta(PVector center, float theta_, String sc_update){
+	public void sphSetTheta(PVector center, float theta_, String sc_update){
 		theta = getTheta(center,curr.loc);
 		sphMoveTheta(center,theta_-theta,sc_update);
 	}
-	void sphMovePhi(PVector center, float dphi_, String sc_update){
+	public void sphMovePhi(PVector center, float dphi_, String sc_update){
 		/* sc_update: 
           	center - scene center is same as center
           	ahead - scene center is straight ahead, changes with dir vector
@@ -263,14 +264,14 @@ public class Cam {
 				curr.down.normalize(); 
 			case "none":
 		}
-	} 
-	void sphSetPhi(PVector center, float phi_, String sc_update){
+	}
+	public void sphSetPhi(PVector center, float phi_, String sc_update){
 		phi = getPhi(center,curr.loc);
 		sphMovePhi(center,phi_-phi,sc_update);
 	} 
 
 	/********************************* SMOOTH PURSUITS ****************************************/
-	int smoothLinPursuit(CamParam dest, int reset_frames, int call_state, int return_state){
+	public int smoothLinPursuit(CamParam dest, int reset_frames, int call_state, int return_state){
 		/* move from curr dir/loc/sc/down vector to dest dir/loc/sc/down vector in a linear manner.*/
   
 		if (fr_count == 0){
@@ -300,7 +301,7 @@ public class Cam {
 			return return_state;
 		}
 	}
-	int smoothSphPursuit(CamParam dest, PVector center, int reset_frames, int call_state, int return_state){
+	public int smoothSphPursuit(CamParam dest, PVector center, int reset_frames, int call_state, int return_state){
 		/* move from curr dir/loc/sc/down vector to dest dir/loc/sc/down vector, scaled to be on the
     	surface of a sphere at a distance defined by dest, following motion in the positive theta direction
 		 */
@@ -348,11 +349,11 @@ public class Cam {
   
   
 	/********************************* HELPER FUNCTIONS ****************************************/
-	float getRadius(PVector center, PVector vec){
+	public float getRadius(PVector center, PVector vec){
 		update.loc = PVector.sub(vec,center,update.loc);          // vector away center
 		return update.loc.mag();
 	}
-	float getTheta(PVector center, PVector vec){
+	public float getTheta(PVector center, PVector vec){
 		update.loc = PVector.sub(vec,center,update.loc);          // vector away center
 		if (update.loc.x != 0){
 			theta = PApplet.atan(update.loc.y/update.loc.x);    
@@ -373,7 +374,7 @@ public class Cam {
 		}
 		return theta;
 	}
-	float getPhi(PVector center, PVector vec){
+	public float getPhi(PVector center, PVector vec){
 		update.loc = PVector.sub(vec,center,update.loc);          // vector away center
 		r = update.loc.mag();                                     // get radius
 		if (r != 0){
@@ -383,7 +384,7 @@ public class Cam {
 			return 0;
 		}
 	}
-	PVector rotateTheta(PVector center, PVector vec, float theta_){
+	public PVector rotateTheta(PVector center, PVector vec, float theta_){
 		PVector temp = new PVector(0,0,0);
 		temp = PVector.sub(vec,center,temp);                      // vector pointing away from center
 		temp.set(temp.x*PApplet.cos(theta_)-temp.y*PApplet.sin(theta_),
@@ -392,7 +393,7 @@ public class Cam {
 		vec = PVector.add(center,temp);                           // add rotated vector back to center
 		return vec;
 	}
-	PVector rotatePhi(PVector center, PVector vec, float phi_){
+	public PVector rotatePhi(PVector center, PVector vec, float phi_){
 		PVector temp = new PVector(0,0,0);
 		temp = PVector.sub(vec,center,temp);                      // vector pointing away from center
 		float theta_ = getTheta(center, vec);

@@ -1,4 +1,4 @@
-// CubeComponents class; used as objects in Cube class
+package glasscube;// CubeComponents class; used as objects in Cube class
 
 import processing.core.PApplet;
 import processing.core.PVector;

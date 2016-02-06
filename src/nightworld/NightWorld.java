@@ -1,9 +1,14 @@
+package nightworld;
+
+import core.Cam;
+import core.CamParam;
+import core.Site;
 import processing.core.PApplet;
 import processing.core.PVector;
 
 public class NightWorld extends Site {
 
-    // Inherits from Site class
+    // Inherits from core.Site class
     // parent, Tubeworld PApplet
     // center
     // rad_site
@@ -11,15 +16,15 @@ public class NightWorld extends Site {
     // init
     // reset_frames
 
-    NightWorld(PApplet parent_, PVector center_, float rad_site_, float rad_inf_, CamParam init_, int reset_frames_){
+    public NightWorld(PApplet parent_, PVector center_, float rad_site_, float rad_inf_, CamParam init_, int reset_frames_){
         // pass arguments to parent constructor
         super(parent_,center_,rad_site_,rad_inf_,init_,reset_frames_);
     }
 
-    void updatePhysics(boolean[] keys_pressed, boolean[] keys_toggled){
+    public void updatePhysics(boolean[] keys_pressed, boolean[] keys_toggled){
     }
 
-    void drawSite(){
+    public void drawSite(){
 
         parent.background(0);   // draw background
 
@@ -76,7 +81,7 @@ public class NightWorld extends Site {
 
     }
 
-    int updateCam(Cam cam, int state, boolean[] keys_pressed){
+    public int updateCam(Cam cam, int state, boolean[] keys_pressed){
         return state;
     }
 

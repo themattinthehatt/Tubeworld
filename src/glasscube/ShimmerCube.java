@@ -1,33 +1,35 @@
-// Cube class; used as objects in the GlassCube class
+// Cube class; used as objects in the glasscube.GlassCube class
+
+package glasscube;
 import processing.core.PApplet;
 import processing.core.PVector;
 
 public class ShimmerCube {
   
 	// PApplet parent
-	PApplet parent;
+	public PApplet parent;
 	
 	// size of cube
-	PVector bounds;
-	float half_side_len;
-	float mass;
+	public PVector bounds;
+	public float half_side_len;
+	public float mass;
   
 	// location and velocity of cube, shift displacements for shimmer
-	PVector loc;
-	PVector vel;
-	ShimmerCubeComponent rgb;
+	public PVector loc;
+	public PVector vel;
+	public ShimmerCubeComponent rgb;
   
 	// for collison detection
-	PVector temp;
-	float temp1;
-	float temp2;
-	float mass_fac;
-	float r;
-	float theta;
-	float phi;
+	public PVector temp;
+	public float temp1;
+	public float temp2;
+	public float mass_fac;
+	public float r;
+	public float theta;
+	public float phi;
  
 	/************************************ CONSTRUCTOR ************************************/
-	ShimmerCube(PApplet parent_, float bound_side_len, float side_len_){
+	public ShimmerCube(PApplet parent_, float bound_side_len, float side_len_){
     
 		// parent PApplet
 		parent = parent_;
@@ -53,13 +55,13 @@ public class ShimmerCube {
 	}
   
 	/************************************ UPDATE  *******************************************/
-	void updatePos(){
+	public void updatePos(){
 		// just move white square; colored squares will update in relation to this in shimmer
 		loc.add(vel);
 	}
   
 	/************************************ BOUNDARY DETECTION ********************************/
-	void detectBoundaries(){
+	public void detectBoundaries(){
    
 		// check sides after updating
 		if (loc.x+half_side_len > bounds.x){
@@ -95,12 +97,12 @@ public class ShimmerCube {
 
   
 	/************************************ SHIMMER *******************************************/
-	void shimmer(){
+	public void shimmer(){
 		rgb.shimmer();
 	}
   
 	/************************************ DRAW CUBE *****************************************/
-	void drawCube(){
+	public void drawCube(){
 		parent.pushMatrix();
 		parent.translate(loc.x,loc.y,loc.z);
 		rgb.drawCubes();
@@ -108,7 +110,7 @@ public class ShimmerCube {
 	}
   
 	/************************************ HELPER FUNCTIONS **********************************/
-	void getTheta(PVector vec){
+	public void getTheta(PVector vec){
 		temp = PVector.sub(vec,loc,temp);          // vector away center
 		if (temp.x != 0){
 			theta = PApplet.atan(temp.y/temp.x);    
@@ -128,7 +130,7 @@ public class ShimmerCube {
 			theta = 0;
 		}
 	}
-	void getPhi(PVector vec){
+	public void getPhi(PVector vec){
 		temp = PVector.sub(vec,loc,temp);          // vector away center
 		r = temp.mag();                                     // get radius
 		if (r != 0){
@@ -140,7 +142,7 @@ public class ShimmerCube {
 	}
   
 	/************************************ COLLISION DETECTION *******************************/
-	void detectCollision(ShimmerCube other){
+	public void detectCollision(ShimmerCube other){
 		// have loc, vel, other.loc, other.vel
 		// check for collision
 		// check for collision

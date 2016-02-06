@@ -1,27 +1,28 @@
-/* CamCtrl class is used to update Processing's camera function in response to keyboard 
+/* core.CamCtrl class is used to update Processing's camera function in response to keyboard
    input or predetermined motion settings 
-   keyboard controls can be found in KeyHandler class
+   keyboard controls can be found in core.KeyHandler class
 */
-  
+
+package core;
 import processing.core.PApplet;
 
-class CamCtrl {
+public class CamCtrl {
   
 	// properties
-	PApplet parent;
-	Cam cam;                 // camera object
-  
-	float rot_rad;          // number of radians to rotate for LEFT or RIGHT key press per frame
-	float dir_mult;         // multiplier for direction to increase forward velocity
-	float pan_mult;         // multiplier for direction to pan
-	int state;               /* rendering state of the program
-                            	0: reset mode (interactivity disabled)
-                            	1: free view (interactivity enabled through keyboard) (default)
-                            	2: preprogrammed camera track 1
-                           	 */
+	public PApplet parent;
+	public Cam cam;                 // camera object
+
+	public float rot_rad;          // number of radians to rotate for LEFT or RIGHT key press per frame
+	public float dir_mult;         // multiplier for direction to increase forward velocity
+	public float pan_mult;         // multiplier for direction to pan
+	public int state;               /* rendering state of the program
+           		                 	0: reset mode (interactivity disabled)
+                	            	1: free view (interactivity enabled through keyboard) (default)
+                    	        	2: preprogrammed camera track 1
+                        		   	 */
 	
 	/*************************************** CONSTRUCTOR ************************************/
-	CamCtrl(PApplet parent_, CamParam cam_init_){
+	public CamCtrl(PApplet parent_, CamParam cam_init_){
     
 		parent = parent_;
 		
@@ -39,7 +40,7 @@ class CamCtrl {
   }
   
 	/*************************** UPDATE CAMERA LOCATION AND SCENE CENTER ***********************/
-	int update(boolean[] keys_pressed, boolean[] keys_toggled, Site active_site) {
+	public int update(boolean[] keys_pressed, boolean[] keys_toggled, Site active_site) {
 
 		if (state == 1) { // free viewing setting
 

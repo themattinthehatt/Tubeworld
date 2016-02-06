@@ -1,3 +1,8 @@
+package mengersponge;
+
+import core.Cam;
+import core.CamParam;
+import core.Site;
 import processing.core.PApplet;
 import processing.core.PVector;
 
@@ -7,25 +12,25 @@ import processing.core.PVector;
 
 public class MengerSponge extends Site {
   
-	// Inherits from Site class
+	// Inherits from core.Site class
 	// parent, Tubeworld PApplet
 	// center
 	// rad_site
 	// rad_inf
 	// init
 	// reset_frames
-	float side_len;
-	MengerCube[] cubes;
-	int fr_count;
-	float dir_mult;
-	float rot_rad;
-	float order;
-	float num_cubes_side;
-	float num_cubes_tot;
-	float num_cubes_rendered;
-	float cube_side_len;
-	
-	MengerSponge(PApplet parent_,PVector center_, float rad_site_, float rad_inf_, CamParam init_, int reset_frames_){
+	public float side_len;
+	public MengerCube[] cubes;
+	public int fr_count;
+	public float dir_mult;
+	public float rot_rad;
+	public float order;
+	public float num_cubes_side;
+	public float num_cubes_tot;
+	public float num_cubes_rendered;
+	public float cube_side_len;
+
+	public MengerSponge(PApplet parent_, PVector center_, float rad_site_, float rad_inf_, CamParam init_, int reset_frames_){
 
 		// pass arguments to parent constructor
 		super(parent_,center_,rad_site_,rad_inf_,init_,reset_frames_);
@@ -128,11 +133,11 @@ public class MengerSponge extends Site {
 	} // end Constructor
 	
 	/************************************ UPDATE PHYSICS ************************************/
-	void updatePhysics(boolean[] keys_pressed, boolean[] keys_toggled){
+	public void updatePhysics(boolean[] keys_pressed, boolean[] keys_toggled){
 	}    
   
 	/************************************ DRAW SITE *****************************************/
-	void drawSite(){
+	public void drawSite(){
 		parent.pushMatrix();
 		parent.translate(center.x,center.y,center.z);
 
@@ -149,7 +154,7 @@ public class MengerSponge extends Site {
 	}
   
 	/************************************ UPDATE CAMERA *************************************/
-	int updateCam(Cam cam, int state, boolean[] key_pressed){
+	public int updateCam(Cam cam, int state, boolean[] key_pressed){
 		if (state == 0) { // reset mode
 			state = cam.smoothLinPursuit(init,reset_frames,0,1); // calling state, return state
 		} else if (state == 2) { // roller coaster mode
