@@ -219,45 +219,4 @@ public class TowerGirder {
 		}
 	}
 
-	public void resetGirder(boolean[][][] is_occupied, int level, int z_val, int num_beams_x, int num_beams_y,
-					 float beam_side_len, float beam_side_width) {
-
-		// INPUTS:
-		// 		is_occupied - current boolean array defining occupied nodes in tower
-		// 		level - z-value of where we'll look for open spots in is_occupied
-		// 		z_val - corresponding z-value of level in 3D space (since level is constrained to be a small number)
-		// 		num_beams_x - for determining possible initial points
-		// 		num_beams_y - for determining possible initial points
-		// 		beam_side_len - for reinitializing beam objects
-		// 		beam_side_width - for reinitializing beam objects
-
-		// temp variables
-		boolean valid_indices = false; 
-		int x = 0;						
-		int y = 0;
-		int z = level;
-		// loop through until valid initial indices are found
-		while (!valid_indices){
-			x = (int) parent.random((float) num_beams_x);
-			y = (int) parent.random((float) num_beams_y);
-			if (!is_occupied[x][y][z]){
-				valid_indices = true;
-			}
-		}
-		// update reference to is_occupied
-		is_occupied[x][y][z] = true;
-
-		// don't need to fully reinitialize new tower.TowerGirder object, just reset key variables
-		for (int i = 0; i < num_beams; i++){
-			beam[i].side_len = beam_side_len+beam_side_width;
-			beam[i].color = init_color;
-		}
-		curr_pos_x = x;
-		curr_pos_y = y;
-		curr_pos_z = z_val; // not the z variable from above; need the unmodded version
-		curr_level = level;
-		num_beams = 0;
-		beg_indx = 0;
-		end_indx = -1;
-	}
 }

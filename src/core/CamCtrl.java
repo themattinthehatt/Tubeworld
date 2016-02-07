@@ -14,7 +14,6 @@ public class CamCtrl {
 
 	public float rot_rad;          // number of radians to rotate for LEFT or RIGHT key press per frame
 	public float dir_mult;         // multiplier for direction to increase forward velocity
-	public float pan_mult;         // multiplier for direction to pan
 	public int state;               /* rendering state of the program
            		                 	0: reset mode (interactivity disabled)
                 	            	1: free view (interactivity enabled through keyboard) (default)
@@ -32,7 +31,6 @@ public class CamCtrl {
 		// speed multipliers
 		rot_rad = PApplet.PI/128;  // number of radians to rotate for LEFT or RIGHT key press per frame
 		dir_mult = 20;      // multiplier for direction to increase forward velocity
-		pan_mult = 20;      // multiplier for direction to pan
     
 		// start off in free viewing mode
 		state = 1;
@@ -78,10 +76,10 @@ public class CamCtrl {
 				}
 			}
 			if (keys_pressed[0]) { // pan left
-				cam.panLeft(pan_mult);
+				cam.panLeft(dir_mult);
 			}
 			if (keys_pressed[1]) { // pan right
-				cam.panRight(pan_mult);
+				cam.panRight(dir_mult);
 			}
         
 			/***************** ROTATIONS ***********************/

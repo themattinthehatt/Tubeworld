@@ -26,7 +26,7 @@ public class Junction {
         parent.pushMatrix();
         parent.translate(x,y,z);
         parent.stroke(255, 255, 255);
-        parent.fill(0, 0, 0, 0);
+        parent.fill(255); //0, 0, 0, 0);
         parent.box(x_dim, y_dim, z_dim);
         parent.popMatrix();
     }

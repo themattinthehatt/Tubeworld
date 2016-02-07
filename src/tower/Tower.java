@@ -75,9 +75,9 @@ public class Tower extends Site {
 		super(parent_,center_,rad_site_,rad_inf_,init_,reset_frames_);
 		
 		// initialize tower structure properties
-		num_beams_x = 5;
-		num_beams_y = 5;
-		num_beams_z = 100; 		// total number of levels to draw
+		num_beams_x = 2;
+		num_beams_y = 2;
+		num_beams_z = 10; 		// total number of levels to draw
 		beam_side_width = 5; 	// (in pixels)
 		beam_side_len = 50;  	// (in pixels)
 		total_side_len_x = ((float) num_beams_x)*beam_side_len;
@@ -97,11 +97,11 @@ public class Tower extends Site {
 		temp_top_level_z = 0;	// z-value of temp_top_level variable; used for resetting girders to highest level
 		num_levels = 3; 		// total number of levels to keep track of; will be used in a modular manner
 		update_type = 0; 		// 0 for forcing beams upward at same rate, 1 for death and respawning, which needs more num_levels
-		stopping_behavior = 0; 	// behavior when num_beams_z is reached
+		stopping_behavior = 1; 	// behavior when num_beams_z is reached
 		dynamics_stopped = false;
 		is_occupied = new boolean[num_beams_x+1][num_beams_y+1][num_levels]; // plus ones for extra node on ends
-		for (int i = 0; i < num_beams_x; i++){
-			for (int j = 0; j < num_beams_y; j++){
+		for (int i = 0; i < num_beams_x+1; i++){
+			for (int j = 0; j < num_beams_y+1; j++){
 				for (int k = 0; k < num_levels; k++){
 					is_occupied[i][j][k] = false;
 				}
@@ -113,9 +113,9 @@ public class Tower extends Site {
 		for (int i = 0; i < num_girders; i++){
 			// loop through until valid initial indices are found
 			while (!valid_indices){
-				x = (int) parent.random((float) num_beams_x);
-				y = (int) parent.random((float) num_beams_y);
-				z = (int) 0;
+				x = (int) parent.random((float) num_beams_x+1);
+				y = (int) parent.random((float) num_beams_y+1);
+				z = 0;
 				if (!is_occupied[x][y][z]){
 					valid_indices = true;
 					// update logical array for valid indices
@@ -275,11 +275,9 @@ public class Tower extends Site {
 							 * Note that is_occupied is not updated to reflect the beam leaving this level - this will be
 							 * handled when a beam from the top level moves into this level, i.e. a complete reset of values
 							 */
-							girder[i].resetGirder(is_occupied, temp_top_level, temp_top_level_z,
-									num_beams_x, num_beams_y, beam_side_len, beam_side_width);
+							reinitializeGirder(i);
 							// update is_occupied done in resetGirder
 							findVacantSpot(i);
-							PApplet.println("1");
 						} else {
 							// girder can move upwards
 							girder[i].addBeam(4);                    // add new beam to girder
@@ -320,7 +318,7 @@ public class Tower extends Site {
 		} // end check height limit
 	}
 
-	/************************************ ADD BEAM HELPER ***********************************/
+	/************************************ FIND VACANT SPOT ***********************************/
 	public void findVacantSpot(int i){
 		// i is index into girder array
 		// top_level (update_type = 0) or curr_level (update_type = 1)
@@ -384,16 +382,15 @@ public class Tower extends Site {
 				temp_top_level = curr_level;
 				temp_top_level_z++;
 				// reset is_occupied at this level
-				for (int j = 0; j < num_beams_x; j++) {
-					for (int k = 0; k < num_beams_y; k++) {
+				for (int j = 0; j < num_beams_x+1; j++) {
+					for (int k = 0; k < num_beams_y+1; k++) {
 						is_occupied[j][k][curr_level] = false;
 					}
 				}
 				is_occupied[x][y][curr_level] = true;	// update collision array
 			} else if (is_occupied[x][y][curr_level]){
 				// girder CAN'T move upwards, and we're not on top layer - needs to die :(
-				girder[i].resetGirder(is_occupied,temp_top_level,temp_top_level_z,
-									  num_beams_x,num_beams_y,beam_side_len,beam_side_width);
+				reinitializeGirder(i);
 				// update is_occupied  done in resetGirder
 				// call function recursively
 				findVacantSpot(i);
@@ -435,7 +432,37 @@ public class Tower extends Site {
 			}
 		}
 	}
-	
+
+	/************************************ REINITIALIZE GIRDER *********************************/
+	public void reinitializeGirder(int indx) {
+
+		boolean valid_indices = false;
+		// loop through until valid initial indices are found
+		while (!valid_indices){
+			x = (int) parent.random((float) num_beams_x+1);
+			y = (int) parent.random((float) num_beams_y+1);
+			z = temp_top_level;
+			if (!is_occupied[x][y][z]){
+				valid_indices = true;
+				// update reference to is_occupied
+				is_occupied[x][y][z] = true;
+			}
+		}
+
+		// don't need to fully reinitialize new tower.TowerGirder object, just reset key variables
+		for (int i = 0; i < girder[indx].num_beams; i++){
+			girder[indx].beam[i].side_len = beam_side_len+beam_side_width;
+			girder[indx].beam[i].color = girder[indx].init_color;
+		}
+		girder[indx].curr_pos_x = x;
+		girder[indx].curr_pos_y = y;
+		girder[indx].curr_pos_z = temp_top_level_z; // not the z variable from above; need the unmodded version
+		girder[indx].curr_level = temp_top_level;
+		girder[indx].num_beams = 0;
+		girder[indx].beg_indx = 0;
+		girder[indx].end_indx = -1;
+	}
+
 	/************************************ DRAW SITE *****************************************/
 	public void drawSite(){
 		
@@ -567,8 +594,8 @@ public class Tower extends Site {
 		// reinitialize logical array for collision detection
 		top_level = 0;	// current "top_level" in is_occupied
 		temp_top_level_z = 0;
-		for (int i = 0; i < num_beams_x; i++){
-			for (int j = 0; j < num_beams_y; j++){
+		for (int i = 0; i < num_beams_x+1; i++){
+			for (int j = 0; j < num_beams_y+1; j++){
 				for (int k = 0; k < num_levels; k++){
 					is_occupied[i][j][k] = false;
 				}
@@ -577,8 +604,7 @@ public class Tower extends Site {
 				
 		// reinitialize tower.TowerGirder objects
 		for (int i = 0; i < num_girders; i++){
-			girder[i].resetGirder(is_occupied,0,temp_top_level_z,num_beams_x,num_beams_y,
-								  beam_side_len,beam_side_width);
+			reinitializeGirder(i);
 			// update logical array for valid indices done in resetGirder
 		}
 		

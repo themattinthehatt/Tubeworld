@@ -10,11 +10,10 @@ import processing.core.PVector;
 
 /* TODO
  * make a function that forces the tower to its max height
- * figure out bug in logic update!!
  * update camera z position for 2 preset
  * fade towers
  * play with tower colors?
- * oh boy. Sit down and figure out how to combine Tower and MetaTower classes into a single interface
+ * combine Tower and MetaTower classes into a single interface
  * fix beam width/length weirdness in Tower; make it same as MetaTower
  */
 
@@ -106,29 +105,29 @@ public class MetaTower extends Site {
         super(parent_, center_, rad_site_, rad_inf_, init_, reset_frames_);
 
         // for individual tower structures
-        num_beams_x = 5;                // length of x side in number of beams
-        num_beams_y = 5;                // length of y side in number of beams
-        num_beams_z = 10;               // length of z side in number of beams
+        num_beams_x = 2;                // length of x side in number of beams
+        num_beams_y = 2;                // length of y side in number of beams
+        num_beams_z = 5;               // length of z side in number of beams
         beam_side_width = 5;            // width (~circumference) of beams (in pixels)
         beam_side_len = 50;             // length of beam (JUST distance between nodes; different than length in tower.TowerBeam class)
         tower_side_len_x = ((float) num_beams_x)*beam_side_len;        // width (~circumference) of towers (should be multiple of beam_side_len)
         tower_side_len_y = ((float) num_beams_y)*beam_side_len;        // length of beam (JUST distance between nodes (should be multiple of beam_side_len)
         tower_side_len_z = ((float) num_beams_z)*beam_side_len;        // height of individual towers
-        num_girders = 3;                // number of girders in each tower
+        num_girders = 1;                // number of girders in each tower
         beam_extend_frames = 10;
         beam_pause_frames = 1;
 
         // for overall metatower structure
         num_towers_x = 2;            // length of x side in number of towers
         num_towers_y = 2;            // length of y side in number of towers
-        num_towers_z = 5;            // length of z side in number of towers
+        num_towers_z = 8;            // length of z side in number of towers
         junction_len_x = tower_side_len_x;
         junction_len_y = tower_side_len_y;
         junction_len_z = tower_side_len_x; // arbitrary; x or y will work
         meta_total_side_len_x = ((float) num_towers_x)*(tower_side_len_z+junction_len_x)+junction_len_x;        // total side length along x-direction
         meta_total_side_len_y = ((float) num_towers_y)*(tower_side_len_z+junction_len_y)+junction_len_y;        // total side length along y-direction
-        num_init_towers = 1;             // number of starting towers
-        max_num_towers = 15;             // maximum number of towers
+        num_init_towers = 2;             // number of starting towers
+        max_num_towers = 48;             // maximum number of towers
         curr_num_towers = num_init_towers;
         tower_indx = num_init_towers-1;     // index of last tower in tower queue
 
@@ -145,12 +144,12 @@ public class MetaTower extends Site {
         trans_probs = new float[4];
         top_level = 1;			// current "top_level" in is_occupied; starts at 1
         temp_top_level_z = 1;	// z-value of temp_top_level variable; used for resetting girders to highest level
-        num_levels = 5; 		// total number of levels to keep track of; will be used in a modular manner
+        num_levels = 3; 		// total number of levels to keep track of; will be used in a modular manner
         stopping_behavior = 0; 	// behavior when num_towers_z is reached
         dynamics_stopped = false;
         meta_is_occupied = new boolean[num_towers_x+1][num_towers_y+1][num_levels]; // plus ones for extra node on ends
-        for (int i = 0; i < num_towers_x; i++){
-            for (int j = 0; j < num_towers_y; j++){
+        for (int i = 0; i < num_towers_x+1; i++){
+            for (int j = 0; j < num_towers_y+1; j++){
                 for (int k = 0; k < num_levels; k++){
                     meta_is_occupied[i][j][k] = false;
                 }
@@ -174,6 +173,7 @@ public class MetaTower extends Site {
                         valid_indices = true;
                         // update logical array for valid indices
                         meta_is_occupied[x][y][z] = true;
+                        meta_is_occupied[x][y][z+1] = true;
                     }
                 }
                 tower_locs[i][0] = x;     // keep track of tower target location in meta_is_occupied
@@ -193,7 +193,7 @@ public class MetaTower extends Site {
              */
             tower[i] = new Tower(parent_,new PVector(((float) x)*(tower_side_len_z+tower_side_len_x),((float) y)*(tower_side_len_z+tower_side_len_y),0),
                                                      5000,1000,init,120);
-            // set necessary properties
+            // set necessary properties (if num_beams changes there should be a reset of is_occupied)
             tower[i].num_beams_x = num_beams_x;
             tower[i].num_beams_y = num_beams_y;
             tower[i].beam_side_width = beam_side_width; // (in pixels)
@@ -347,7 +347,7 @@ public class MetaTower extends Site {
                          * Note that meta_is_occupied is not updated to reflect the beam leaving this level - this will be
                          * handled when a beam from the top level moves into this level, i.e. a complete reset of values
                          */
-                        reinitializeTower(meta_is_occupied, temp_top_level, temp_top_level_z, num_towers_x, num_towers_y, i);
+                        reinitializeTower(i);
                         // update of meta_is_occupied done in resetGirder
                         findVacantSpot(i);
                     } else {
@@ -374,7 +374,7 @@ public class MetaTower extends Site {
         } // end check height limit
     }
 
-    /************************************ ADD BEAM HELPER ***********************************/
+    /************************************ FIND VACANT SPOT **********************************/
     public void findVacantSpot(int i){
         // i is index into girder array
         // top_level (update_type = 0) or curr_level (update_type = 1)
@@ -441,16 +441,15 @@ public class MetaTower extends Site {
                 temp_top_level = curr_level;
                 temp_top_level_z++;
                 // reset is_occupied at this level
-                for (int j = 0; j < num_towers_x; j++) {
-                    for (int k = 0; k < num_towers_y; k++) {
+                for (int j = 0; j < num_towers_x+1; j++) {
+                    for (int k = 0; k < num_towers_y+1; k++) {
                         meta_is_occupied[j][k][curr_level] = false;
                     }
                 }
                 meta_is_occupied[x][y][curr_level] = true;	// update collision array
             } else if (meta_is_occupied[x][y][curr_level]){
                 // girder CAN'T move upwards, and we're not on top layer - needs to reinitialize :(
-                reinitializeTower(meta_is_occupied,temp_top_level,temp_top_level_z,
-                        num_towers_x,num_towers_y,i); // will call initializeTower once it finds a spot in temp_top_level
+                reinitializeTower(i); // will call initializeTower once it finds a spot in temp_top_level
                 // update meta_is_occupied done in reinitializeTower
                 // call function recursively; location of i is redefined in reinitializeTower
                 findVacantSpot(i);
@@ -508,7 +507,7 @@ public class MetaTower extends Site {
         }
     }
 
-    /************************************ ADD BEAM HELPER ***********************************/
+    /************************************ INITIALIZE TOWER **********************************/
     public void initializeTower(int x, int y, int z, int orientation){
 
         // add tower to end of tower array queue
@@ -553,16 +552,14 @@ public class MetaTower extends Site {
 
     }
 
-    /************************************ ADD BEAM HELPER ***********************************/
-    public void reinitializeTower(boolean[][][] meta_is_occupied, int temp_top_level, int temp_top_level_z,
-                                  int num_towers_x, int num_towers_y, int indx){
+    /************************************ REINITIALIZE TOWER ********************************/
+    public void reinitializeTower(int indx){
 
-        // function will call initializeTower once it finds a spot in temp_top_level
         boolean valid_indices = false;
         // loop through until valid initial indices are found
         while (!valid_indices) {
-            x = (int) parent.random((float) num_towers_x);
-            y = (int) parent.random((float) num_towers_y);
+            x = (int) parent.random((float) num_towers_x+1);
+            y = (int) parent.random((float) num_towers_y+1);
             z = temp_top_level;
             if (!meta_is_occupied[x][y][z]) {
                 valid_indices = true;
@@ -570,10 +567,12 @@ public class MetaTower extends Site {
                 meta_is_occupied[x][y][z] = true;
             }
         }
-        tower_locs[indx][0] = x;     // keep track of tower target location in meta_is_occupied
-        tower_locs[indx][1] = y;     // keep track of tower target location in meta_is_occupied
-        tower_locs[indx][2] = temp_top_level_z;   // keep track of tower target location in meta_is_occupied
+        tower_locs[indx][0] = x;                // keep track of tower target location in meta_is_occupied
+        tower_locs[indx][1] = y;                // keep track of tower target location in meta_is_occupied
+        tower_locs[indx][2] = temp_top_level_z; // keep track of tower target location in meta_is_occupied
         tower_locs[indx][3] = temp_top_level;
+        addJunction(indx);                      // add new junction for tower to build on
+
     }
 
     /************************************ ADD JUNCTION **************************************/
@@ -732,10 +731,10 @@ public class MetaTower extends Site {
     public void resetMetaTower(){
 
         // reinitialize logical array for collision detection
-        top_level = 0;	// current "top_level" in is_occupied
-        temp_top_level_z = 0;
-        for (int i = 0; i < num_towers_x; i++){
-            for (int j = 0; j < num_towers_y; j++){
+        top_level = 1;	// current "top_level" in is_occupied
+        temp_top_level_z = 1;
+        for (int i = 0; i < num_towers_x+1; i++){
+            for (int j = 0; j < num_towers_y+1; j++){
                 for (int k = 0; k < num_levels; k++){
                     meta_is_occupied[i][j][k] = false;
                 }
@@ -749,13 +748,14 @@ public class MetaTower extends Site {
             if (i < num_init_towers) {
                 // loop through until valid initial indices are found
                 while (!valid_indices) {
-                    x = (int) parent.random((float) num_towers_x);
-                    y = (int) parent.random((float) num_towers_y);
+                    x = (int) parent.random((float) num_towers_x+1);
+                    y = (int) parent.random((float) num_towers_y+1);
                     z = (int) 0;
                     if (!meta_is_occupied[x][y][z]) {
                         valid_indices = true;
                         // update logical array for valid indices
                         meta_is_occupied[x][y][z] = true;
+                        meta_is_occupied[x][y][z+1] = true;
                     }
                 }
                 valid_indices = false;    // reset
@@ -763,6 +763,7 @@ public class MetaTower extends Site {
                 x = 0; y = 0; z = 0;      // assign dummy locations to unrendered tower objects
             }
             // reset necessary properties
+            tower[i].resetTower();
             tower[i].tower_orientation = 4; // start off moving in +z direction
         }
 

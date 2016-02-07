@@ -2,10 +2,11 @@
 core.Site class should implement*/
 
 package core;
+
 import processing.core.PApplet;
 import processing.core.PVector;
 
-public class Site {
+public abstract class Site {
 	
 	public PApplet parent;			 // PApplet parent
 	public PVector center;          // center of site
@@ -24,16 +25,12 @@ public class Site {
 	}
   
 	/************************************ UPDATE PHYSICS ************************************/
-	public void updatePhysics(boolean[] keys_pressed, boolean[] keys_toggled){
-	}
+	public abstract void updatePhysics(boolean[] keys_pressed, boolean[] keys_toggled);
   
 	/************************************ DRAW SITE *****************************************/
-	public void drawSite(){
-	}
-  
+	public abstract void drawSite();
+
 	/************************************ UPDATE CAMERA *************************************/
-	public int updateCam(Cam cam, int state, boolean[] keys_pressed){
-		return state;
-	}
+	public abstract int updateCam(Cam cam, int state, boolean[] keys_pressed);
   
 }

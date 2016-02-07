@@ -35,7 +35,7 @@ public class Tubeworld extends PApplet {
 	}
 	
 	public void settings() {
-		  size(800, 800, "processing.opengl.PGraphics3D");
+		  size(800, 600, "processing.opengl.PGraphics3D");
 //		size(800,600,"processing.opengl.OPENGL");
 	}
 	
@@ -79,7 +79,6 @@ public class Tubeworld extends PApplet {
       		cam_init.sc  = new PVector(7500,-7500,0);
     	  	cam_init.dir = new PVector(1,0,0);
 	      	cam_init.down = new PVector(0,0,-1);
-
 		cam_ctrl = new CamCtrl(this,cam_init);
 		  
 	}
@@ -89,8 +88,7 @@ public class Tubeworld extends PApplet {
 		// note: lights have to be called before drawing takes place
 		cam_ctrl.update(key_handler.keys_pressed,key_handler.keys_toggled,sites[active_site_indx]);
 		// push back far end of viewing plane
-		float camZ = ((height/2)/PApplet.tan(PApplet.PI*60/360));
-		perspective(PApplet.PI/3,this.width/this.height,10,10000);
+		perspective(PApplet.PI/3,1.77777777778f,1,10000);
 
 		// find closest site	
 		dist_to_site[0] = 0;	// ensures we're always within radius of influence of tubeworld
