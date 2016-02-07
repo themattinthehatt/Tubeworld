@@ -10,7 +10,6 @@ import processing.core.PVector;
 
 /* TODO
  * make a function that forces the tower to its max height
- * update camera z position for 2 preset
  * fade towers
  * play with tower colors?
  * combine Tower and MetaTower classes into a single interface
