@@ -77,7 +77,7 @@ public class Tower extends Site {
 		// initialize tower structure properties
 		num_beams_x = 2;
 		num_beams_y = 2;
-		num_beams_z = 10; 		// total number of levels to draw
+		num_beams_z = 100; 		// total number of levels to draw
 		beam_side_width = 5; 	// (in pixels)
 		beam_side_len = 50;  	// (in pixels)
 		total_side_len_x = ((float) num_beams_x)*beam_side_len;
@@ -176,13 +176,6 @@ public class Tower extends Site {
 						is_extending_beam = false;	// begin paused at node phase on next draw command
 						fr_count = 0;				// reset frame count
 					}
-					// shift camera center up if a beam on uppermost level is extending
-					if (top_level_extending > 0){
-						cam_center.z = cam_center.z + beam_side_len/beam_extend_frames;
-						preset_cam.loc.z = preset_cam.loc.z + beam_side_len/beam_extend_frames;
-						preset_cam.sc.z = preset_cam.sc.z + beam_side_len/beam_extend_frames;
-						top_level_extending--;
-					}
 				} // end frame_count check 
 			} else if (!dynamics_stopped){
 				// in pause mode between extensions; if last of these frames, perform next logic update
@@ -194,6 +187,13 @@ public class Tower extends Site {
 					addBeamToGirders();
 				} // end frame_count check
 			} // end phase check
+			// shift upwards if beams are moving upwards
+			if (top_level_extending > 0 ){ // && !keys_toggled[32]
+				cam_center.z = cam_center.z + beam_side_len/beam_extend_frames;
+				preset_cam.loc.z = preset_cam.loc.z + beam_side_len/beam_extend_frames;
+				preset_cam.sc.z = preset_cam.sc.z + beam_side_len/beam_extend_frames;
+				top_level_extending--;
+			}
 		} // end paused check
 		if (keys_pressed[8]){
 			resetTower();
@@ -549,7 +549,7 @@ public class Tower extends Site {
 			} else if (cam_fr_count >= reset_frames) {
 				
 				// shift upwards if beams are moving upwards
-				if (top_level_extending > 0){
+				if (top_level_extending > 0 ){ // && !keys_toggled[32]
 					cam.curr.loc.z = cam.curr.loc.z + beam_side_len/beam_extend_frames;
 					cam.curr.sc.z = cam.curr.sc.z + beam_side_len/beam_extend_frames;
 				}
@@ -618,7 +618,7 @@ public class Tower extends Site {
 		cam_center = new PVector(center.x+total_side_len_x/2,center.y+total_side_len_y/2,center.z);
 		preset_cam = new CamParam(new PVector(-1,0,0), 
 					 new PVector(center.x+2*total_side_len_x,center.y+total_side_len_y/2,cam_center.z+500),
-					 cam_center,
+					 new PVector(center.x+total_side_len_x/2,center.y+total_side_len_y/2,center.z),
 					 new PVector(0,0,-1));
 	}
 }

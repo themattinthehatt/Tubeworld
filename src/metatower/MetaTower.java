@@ -87,6 +87,7 @@ public class MetaTower extends Site {
     public CamParam preset_cam;            // for camera updates
     public PVector cam_center;            // coordinates for center of scene to use for updating preset_cam
     public float top_level_extending;    // frame count for camera updates
+    public float tower_extend_frames;    // frame count for camera updates
 
     // temp variables
     private float rand;					// random number for determining location of new beams
@@ -166,8 +167,8 @@ public class MetaTower extends Site {
             if (i < num_init_towers) {
                 // loop through until valid initial indices are found
                 while (!valid_indices) {
-                    x = (int) parent.random((float) num_towers_x);
-                    y = (int) parent.random((float) num_towers_y);
+                    x = (int) parent.random((float) num_towers_x+1);
+                    y = (int) parent.random((float) num_towers_y+1);
                     z = 0;
                     if (!meta_is_occupied[x][y][z]) {
                         valid_indices = true;
@@ -210,7 +211,8 @@ public class MetaTower extends Site {
         }
 
         // other variables for tracking dynamics
-        tower_pause_frames = beam_extend_frames + beam_pause_frames;
+        tower_pause_frames = beam_extend_frames+beam_pause_frames;
+        tower_extend_frames = beam_extend_frames*num_beams_z;
         fr_count = new float[max_num_towers];           // frame count for controlling pauses
         is_finishing_tower = new boolean[max_num_towers];   // boolean indicating if tower is in final phase of updating
         for (int i = 0; i < max_num_towers; i++){
@@ -267,13 +269,6 @@ public class MetaTower extends Site {
                             is_finishing_tower[i] = false;  // set flag to false
                             addJunction(i);                 // add new junction if possible; new tower added at end of pause
                         }
-                        // shift camera center up if a beam on uppermost level is extending
-                        if (top_level_extending > 0) {
-                            cam_center.z = cam_center.z + beam_side_len / beam_extend_frames;
-                            preset_cam.loc.z = preset_cam.loc.z + beam_side_len / beam_extend_frames;
-                            preset_cam.sc.z = preset_cam.sc.z + beam_side_len / beam_extend_frames;
-                            top_level_extending--;
-                        }
                     } // end frame_count check
                 } else if (!dynamics_stopped && fr_count[i] != tower_pause_frames) {
                     // in pause mode between extensions; if last of these frames, perform next logic update
@@ -285,6 +280,13 @@ public class MetaTower extends Site {
                     } // end frame_count check
                 } // end phase check
             } //end tower loop
+            // shift upwards if beams are moving upwards
+            if (top_level_extending > 0){
+                cam_center.z = cam_center.z + (tower_side_len_z+junction_len_z) / tower_extend_frames;
+                preset_cam.loc.z = preset_cam.loc.z + (tower_side_len_z+junction_len_z) / tower_extend_frames;
+                preset_cam.sc.z = preset_cam.sc.z + (tower_side_len_z+junction_len_z) / tower_extend_frames;
+                top_level_extending--;
+            }
         } // end paused check
         if (keys_pressed[8]){
             resetMetaTower();
@@ -368,7 +370,7 @@ public class MetaTower extends Site {
             } // end update_type check
             if (temp_top_level != top_level) {
                 // we've moved up; set flag so we can increase center for cam preset
-                top_level_extending = beam_extend_frames;
+                top_level_extending = tower_extend_frames;
             }
             top_level = temp_top_level; // finally update top_level
         } // end check height limit
@@ -689,8 +691,8 @@ public class MetaTower extends Site {
 
                 // shift upwards if beams are moving upwards
                 if (top_level_extending > 0){
-                    cam.curr.loc.z = cam.curr.loc.z + beam_side_len/beam_extend_frames;
-                    cam.curr.sc.z = cam.curr.sc.z + beam_side_len/beam_extend_frames;
+                    cam.curr.loc.z = cam.curr.loc.z + (tower_side_len_z+junction_len_z) / tower_extend_frames;
+                    cam.curr.sc.z = cam.curr.sc.z + (tower_side_len_z+junction_len_z) / tower_extend_frames;
                 }
 
                 // rotate
@@ -750,7 +752,7 @@ public class MetaTower extends Site {
                 while (!valid_indices) {
                     x = (int) parent.random((float) num_towers_x+1);
                     y = (int) parent.random((float) num_towers_y+1);
-                    z = (int) 0;
+                    z = 0;
                     if (!meta_is_occupied[x][y][z]) {
                         valid_indices = true;
                         // update logical array for valid indices
@@ -758,9 +760,18 @@ public class MetaTower extends Site {
                         meta_is_occupied[x][y][z+1] = true;
                     }
                 }
+                tower_locs[i][0] = x;     // keep track of tower target location in meta_is_occupied
+                tower_locs[i][1] = y;     // keep track of tower target location in meta_is_occupied
+                tower_locs[i][2] = z+1;   // keep track of tower target location in meta_is_occupied
+                tower_locs[i][3] = z+1;
+                tower[i].center = new PVector(x*(tower_side_len_z+tower_side_len_x),
+                                              y*(tower_side_len_z+tower_side_len_y),0);
                 valid_indices = false;    // reset
             } else {
-                x = 0; y = 0; z = 0;      // assign dummy locations to unrendered tower objects
+                tower_locs[i][0] = 0;     // keep track of tower target location in meta_is_occupied
+                tower_locs[i][1] = 0;     // keep track of tower target location in meta_is_occupied
+                tower_locs[i][2] = 0;   // keep track of tower target location in meta_is_occupied
+                tower_locs[i][3] = 0;
             }
             // reset necessary properties
             tower[i].resetTower();
@@ -776,6 +787,10 @@ public class MetaTower extends Site {
         // reinitialize state variables
         //is_extending_beam = false;	// will begin with pause period, and a new beam will be added to each girder
         cam_fr_count = 0;
+        for (int i = 0; i < max_num_towers; i++){
+            fr_count[i] = 0;
+            is_finishing_tower[i] = false;
+        }
 
         // reinitialize cam presets
         cam_center = new PVector(center.x+meta_total_side_len_x/2,center.y+meta_total_side_len_x/2,center.z);
