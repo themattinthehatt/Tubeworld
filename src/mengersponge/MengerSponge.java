@@ -29,6 +29,7 @@ public class MengerSponge extends Site {
 	public float num_cubes_tot;
 	public float num_cubes_rendered;
 	public float cube_side_len;
+	public PVector cam_center;			// for camera updates
 
 	public MengerSponge(PApplet parent_, PVector center_, float rad_site_, float rad_inf_, CamParam init_, int reset_frames_){
 
@@ -130,6 +131,16 @@ public class MengerSponge extends Site {
 				cube_counter++;
 			}
 		} // end cube iteration
+
+		// camera stuff
+		// redefine init based on size of sponge
+		init.dir = new PVector(-1,0,0);
+		init.down = new PVector(0,0,-1);
+		init.loc = new PVector(center.x+2*side_len, center.y+side_len/2, center.z+side_len/2);
+		init.sc = new PVector(center.x+side_len/2, center.y+side_len/2, center.z+side_len/2);
+		// define another center of the sponge for camera presets ('center' property should really be called origin)
+		cam_center = new PVector(center.x+side_len/2,center.y+side_len/2,center.z+side_len/2);
+
 	} // end Constructor
 	
 	/************************************ UPDATE PHYSICS ************************************/
@@ -160,14 +171,51 @@ public class MengerSponge extends Site {
 		} else if (state == 2) { // roller coaster mode
 			float theta;
 			if (fr_count <= reset_frames) {
-				state = cam.smoothSphPursuit(init,center,reset_frames,2,2);    
+				state = cam.smoothSphPursuit(init,cam_center,reset_frames,2,2);
 				fr_count++;
 				dir_mult = 5;
 				rot_rad = PApplet.PI/246;
 			} else if (fr_count > reset_frames) {
-				cam.sphMoveTheta(center,PApplet.PI/1024,"center");
-				theta = cam.getTheta(center,cam.curr.loc);
-				cam.sphSetPhi(center,PApplet.PI/2+PApplet.PI/8*PApplet.sin(theta),"none");
+				cam.sphMoveTheta(cam_center,PApplet.PI/1024,"center");
+				theta = cam.getTheta(cam_center,cam.curr.loc);
+				cam.sphSetPhi(cam_center,PApplet.PI/2+PApplet.PI/8*PApplet.sin(theta),"none");
+
+				// allow some amount of camera control; exit if other key press after initial reset
+				// update speed multipliers
+				if (key_pressed[101]){
+					if (dir_mult > 2){
+						--dir_mult;
+					}
+				}
+				if (key_pressed[114]) {
+					if (dir_mult < 256){
+						++dir_mult;
+					}
+				}
+				if (key_pressed[116]) {
+					rot_rad = rot_rad*((float) 0.99);
+				}
+				if (key_pressed[121]) {
+					rot_rad = rot_rad*((float) 1.01);
+				}
+				if (key_pressed[2]) { // move forward (inward)
+					cam.moveForward(dir_mult);
+				}
+				if (key_pressed[3]) { // move backward (outward)
+					cam.moveBackward(dir_mult);
+				}
+				if (key_pressed[122]) { // rotate ccw
+					cam.rotCCW(rot_rad);
+				}
+				if (key_pressed[120]) { // rotate cw
+					cam.rotCW(rot_rad);
+				}
+				if (parent.keyPressed == true && !(key_pressed[2] || key_pressed[3] || key_pressed[122] || key_pressed[120] ||
+						key_pressed[101] || key_pressed[114] || key_pressed[116] || key_pressed[121] ||
+						key_pressed[32])) {
+					state = 1;
+					fr_count = 0;
+				} // if keyPressed
 			}
 		} else if (state == 3) {
 		}
