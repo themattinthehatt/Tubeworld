@@ -675,21 +675,21 @@ public class MetaTower extends Site {
     }
 
     /************************************ UPDATE CAM ****************************************/
-    public int updateCam(Cam cam, int state, boolean[] key_pressed){
+    public int updateCam(Cam cam, int state, boolean[] keys_pressed, boolean[] keys_toggled){
         if (state == 0) { // reset mode
             state = cam.smoothLinPursuit(init,reset_frames,0,1); // calling state, return state
-        } else if (state == 2) { // roller coaster mode
+        } else if (state == 2) { // roller coaster mode and not paused
             if (cam_fr_count == 0) {
                 dir_mult = 5;
                 rot_rad = PApplet.PI/246;
             }
-            if (cam_fr_count <= reset_frames-1){
+            if (cam_fr_count < reset_frames){
                 state = cam.smoothLinPursuit(preset_cam,reset_frames,2,2);
                 cam_fr_count++;
             } else if (cam_fr_count >= reset_frames) {
 
                 // shift upwards if beams are moving upwards
-                if (top_level_extending > 0){
+                if (top_level_extending > 0 && !keys_toggled[32]){
                     cam.curr.loc.z = cam.curr.loc.z + (tower_side_len_z+junction_len_z) / tower_extend_frames;
                     cam.curr.sc.z = cam.curr.sc.z + (tower_side_len_z+junction_len_z) / tower_extend_frames;
                 }
@@ -700,30 +700,24 @@ public class MetaTower extends Site {
 
                 // allow some amount of camera control; exit if other key press after initial reset
                 // update speed multipliers
-                if (key_pressed[101]){
-                    if (dir_mult > 2){
-                        --dir_mult;
-                    }
+                if (keys_pressed[101]){
+                    if (dir_mult > 2){--dir_mult;}
                 }
-                if (key_pressed[114]) {
-                    if (dir_mult < 256){
-                        ++dir_mult;
-                    }
+                if (keys_pressed[114]) {
+                    if (dir_mult < 256){++dir_mult;}
                 }
-                if (key_pressed[2]) { // move forward (inward)
+                if (keys_pressed[2]) { // move forward (inward)
                     cam.moveForward(dir_mult);
                 }
-                if (key_pressed[3]) { // move backward (outward)
+                if (keys_pressed[3]) { // move backward (outward)
                     cam.moveBackward(dir_mult);
                 }
-                if (parent.keyPressed == true && !(key_pressed[2] || key_pressed[3] ||
-                        key_pressed[101] || key_pressed[114] || key_pressed[32])) {
+                if (keys_pressed[49]) { // return to state 1
                     state = 1;
                     cam_fr_count = 0;
                 } // if keyPressed
             } // frameCount
 
-        } else if (state == 3) {
         }
         return state;
     }

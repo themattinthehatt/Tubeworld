@@ -31,6 +31,6 @@ public abstract class Site {
 	public abstract void drawSite();
 
 	/************************************ UPDATE CAMERA *************************************/
-	public abstract int updateCam(Cam cam, int state, boolean[] keys_pressed);
+	public abstract int updateCam(Cam cam, int state, boolean[] keys_pressed, boolean[] keys_toggled);
   
 }

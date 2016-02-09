@@ -72,33 +72,31 @@ public class RGBHallway extends Site {
 	}
   
 	/************************************ UPDATE CAMERA *************************************/
-	public int updateCam(Cam cam, int state, boolean[] key_pressed){
+	public int updateCam(Cam cam, int state, boolean[] key_pressed, boolean[] keys_toggled){
 		if (state == 0) { // reset mode
 			state = cam.smoothLinPursuit(init,reset_frames,0,1); // calling state, return state
 		} else if (state == 2) { // roller coaster mode
-			if (fr_count <= reset_frames) {
-				state = cam.smoothLinPursuit(init,reset_frames,2,2);    
-				fr_count++;
+			if (fr_count == 0){
 				dir_mult = 5;
 				rot_rad = PApplet.PI/256;
-			} else if (fr_count > reset_frames) {
+			}
+			if (fr_count < reset_frames) {
+				state = cam.smoothLinPursuit(init,reset_frames,2,2);    
+				fr_count++;
+			} else if (fr_count >= reset_frames) {
 				// allow some amount of camera control; exit if other key press after initial reset
 				// update speed multipliers
 				if (key_pressed[101]){ 
-					if (dir_mult > 2){
-						--dir_mult;
-					}
+					if (dir_mult > 2){--dir_mult;}
 				}
 				if (key_pressed[114]) {
-					if (dir_mult < 256){
-						++dir_mult;
-					}
+					if (dir_mult < 256){++dir_mult;}
 				}
 				if (key_pressed[116]) {
-					rot_rad = rot_rad*((float) 0.99);
+					rot_rad = rot_rad*(0.99f);
 				}
 				if (key_pressed[121]) {
-					rot_rad = rot_rad*((float) 1.01); 
+					rot_rad = rot_rad*(1.01f);
 				}
 				if (key_pressed[2]) { // move forward (inward)
 					cam.moveForward(dir_mult);
@@ -112,8 +110,7 @@ public class RGBHallway extends Site {
 				if (key_pressed[120]) { // rotate cw
 					cam.rotCW(rot_rad);
 				} 
-				if (parent.keyPressed == true && !(key_pressed[2] || key_pressed[3] || key_pressed[122] || key_pressed[120] || 
-						key_pressed[101] || key_pressed[114] || key_pressed[116] || key_pressed[121])) {
+				if (key_pressed[49]) { // state 1
 					state = 1;
 					fr_count = 0;
 				}
@@ -122,8 +119,6 @@ public class RGBHallway extends Site {
 					cam.curr.loc.x = center.x-rect_width;
 				}
 			}
-			
-		} else if (state == 3) {
 		}
 		return state;
 	} // updateCam method

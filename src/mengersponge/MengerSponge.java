@@ -165,59 +165,54 @@ public class MengerSponge extends Site {
 	}
   
 	/************************************ UPDATE CAMERA *************************************/
-	public int updateCam(Cam cam, int state, boolean[] key_pressed){
+	public int updateCam(Cam cam, int state, boolean[] keys_pressed, boolean[] keys_toggled){
 		if (state == 0) { // reset mode
 			state = cam.smoothLinPursuit(init,reset_frames,0,1); // calling state, return state
 		} else if (state == 2) { // roller coaster mode
 			float theta;
-			if (fr_count <= reset_frames) {
-				state = cam.smoothSphPursuit(init,cam_center,reset_frames,2,2);
-				fr_count++;
+			if (fr_count == 0){
 				dir_mult = 5;
 				rot_rad = PApplet.PI/246;
-			} else if (fr_count > reset_frames) {
+			}
+			if (fr_count < reset_frames) {
+				state = cam.smoothSphPursuit(init,cam_center,reset_frames,2,2);
+				fr_count++;
+			} else if (fr_count >= reset_frames) {
 				cam.sphMoveTheta(cam_center,PApplet.PI/1024,"center");
 				theta = cam.getTheta(cam_center,cam.curr.loc);
 				cam.sphSetPhi(cam_center,PApplet.PI/2+PApplet.PI/8*PApplet.sin(theta),"none");
 
 				// allow some amount of camera control; exit if other key press after initial reset
 				// update speed multipliers
-				if (key_pressed[101]){
-					if (dir_mult > 2){
-						--dir_mult;
-					}
+				if (keys_pressed[101]){
+					if (dir_mult > 2){--dir_mult;}
 				}
-				if (key_pressed[114]) {
-					if (dir_mult < 256){
-						++dir_mult;
-					}
+				if (keys_pressed[114]) {
+					if (dir_mult < 256){++dir_mult;}
 				}
-				if (key_pressed[116]) {
-					rot_rad = rot_rad*((float) 0.99);
+				if (keys_pressed[116]) {
+					rot_rad = rot_rad*(0.99f);
 				}
-				if (key_pressed[121]) {
-					rot_rad = rot_rad*((float) 1.01);
+				if (keys_pressed[121]) {
+					rot_rad = rot_rad*(1.01f);
 				}
-				if (key_pressed[2]) { // move forward (inward)
+				if (keys_pressed[2]) { // move forward (inward)
 					cam.moveForward(dir_mult);
 				}
-				if (key_pressed[3]) { // move backward (outward)
+				if (keys_pressed[3]) { // move backward (outward)
 					cam.moveBackward(dir_mult);
 				}
-				if (key_pressed[122]) { // rotate ccw
+				if (keys_pressed[122]) { // rotate ccw
 					cam.rotCCW(rot_rad);
 				}
-				if (key_pressed[120]) { // rotate cw
+				if (keys_pressed[120]) { // rotate cw
 					cam.rotCW(rot_rad);
 				}
-				if (parent.keyPressed == true && !(key_pressed[2] || key_pressed[3] || key_pressed[122] || key_pressed[120] ||
-						key_pressed[101] || key_pressed[114] || key_pressed[116] || key_pressed[121] ||
-						key_pressed[32])) {
+				if (keys_pressed[49]) { // return to state 1
 					state = 1;
 					fr_count = 0;
 				} // if keyPressed
 			}
-		} else if (state == 3) {
 		}
 		return state;
 	}

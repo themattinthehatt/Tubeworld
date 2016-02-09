@@ -122,7 +122,7 @@ public class CamCtrl {
 			}
         
 		} else { // custom animations
-			state = active_site.updateCam(cam,state,keys_pressed); // cam object, calling state
+			state = active_site.updateCam(cam,state,keys_pressed,keys_toggled); // cam object, calling state
 		} 
      
 		// update camera

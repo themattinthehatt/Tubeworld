@@ -81,7 +81,7 @@ public class NightWorld extends Site {
 
     }
 
-    public int updateCam(Cam cam, int state, boolean[] keys_pressed){
+    public int updateCam(Cam cam, int state, boolean[] keys_pressed, boolean[] keys_toggled){
         return state;
     }
 

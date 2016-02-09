@@ -330,7 +330,7 @@ public class Cam {
 			update.down = PVector.sub(dest.down,curr.down,update.down);      // vector pointing from cur down to dest down
 			update.down.div((float) reset_frames);                     // resize for proper updating
 		}
-		if (fr_count < reset_frames){
+		if (fr_count < reset_frames-1){
 			sphMoveRadius(center,dr,"none");
 			sphMoveTheta(center,dtheta,"none");
 			sphMovePhi(center,dphi,"none");
@@ -338,7 +338,7 @@ public class Cam {
 			curr.down.add(update.down);                             // update down vector
 			fr_count++;                                             // increment frame counter
 			return call_state;                                      // continue to return to call state
-		} else if (fr_count == reset_frames) {
+		} else if (fr_count == reset_frames-1) {
 			curr.setEqual(dest);                                    // set curr dir/loc/sc/down to desired destination values
 			fr_count = 0;                                           // reset frame count
 			return return_state;                                    // return state
