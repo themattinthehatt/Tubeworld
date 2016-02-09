@@ -75,9 +75,9 @@ public class Tower extends Site {
 		super(parent_,center_,rad_site_,rad_inf_,init_,reset_frames_);
 		
 		// initialize tower structure properties
-		num_beams_x = 2;
-		num_beams_y = 2;
-		num_beams_z = 100; 		// total number of levels to draw
+		num_beams_x = 3;
+		num_beams_y = 3;
+		num_beams_z = 50; 		// total number of levels to draw
 		beam_side_width = 5; 	// (in pixels)
 		beam_side_len = 50;  	// (in pixels)
 		total_side_len_x = ((float) num_beams_x)*beam_side_len;

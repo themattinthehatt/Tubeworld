@@ -105,9 +105,9 @@ public class MetaTower extends Site {
         super(parent_, center_, rad_site_, rad_inf_, init_, reset_frames_);
 
         // for individual tower structures
-        num_beams_x = 2;                // length of x side in number of beams
-        num_beams_y = 2;                // length of y side in number of beams
-        num_beams_z = 5;               // length of z side in number of beams
+        num_beams_x = 3;                // length of x side in number of beams
+        num_beams_y = 3;                // length of y side in number of beams
+        num_beams_z = 3;               // length of z side in number of beams
         beam_side_width = 5;            // width (~circumference) of beams (in pixels)
         beam_side_len = 50;             // length of beam (JUST distance between nodes; different than length in tower.TowerBeam class)
         tower_side_len_x = ((float) num_beams_x)*beam_side_len;        // width (~circumference) of towers (should be multiple of beam_side_len)
@@ -118,8 +118,8 @@ public class MetaTower extends Site {
         beam_pause_frames = 1;
 
         // for overall metatower structure
-        num_towers_x = 2;            // length of x side in number of towers
-        num_towers_y = 2;            // length of y side in number of towers
+        num_towers_x = 3;            // length of x side in number of towers
+        num_towers_y = 3;            // length of y side in number of towers
         num_towers_z = 8;            // length of z side in number of towers
         junction_len_x = tower_side_len_x;
         junction_len_y = tower_side_len_y;

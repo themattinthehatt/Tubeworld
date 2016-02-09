@@ -13,8 +13,9 @@ import tower.Tower;
 import metatower.MetaTower;
 
 /* TODO
- * fix presets on Menger Sponge
+ * treat frame count variables consistently
  * make F_ presets to move to specified sites
+ * resolve origin/center confusion
  */
 
 public class Tubeworld extends PApplet {
@@ -44,43 +45,101 @@ public class Tubeworld extends PApplet {
 		frameRate(40);
 //		frame.setBackground(new java.awt.Color(0, 0, 0));
 		key_handler = new KeyHandler(this);
-		num_sites = 5;
+
+		// define which sites to render
+		boolean rgbhallway = true;
+		boolean glasscube = true;
+		boolean mengersponge = true;
+		boolean tower = true;
+		boolean metatower = true;
+		String start_site = "tower";
+
+		// common input to constructors if desired
+		float radius_of_influence = 10000; 	// distance beyond which site is not rendered
+		int reset_frames = 60; 			// number of frames needed for reset (0 key press)
+
+		// initialize other variables
+		num_sites = 6;
 		sites = new Site[num_sites];
 		dist_to_site = new float[num_sites];
 		active_site_indx = 0;
 		cam_init = new CamParam(new PVector(0,0,0),new PVector(0,0,0),new PVector(0,0,0),new PVector(0,0,0));
 
-		 /* PVector center;          // center of site
-		  float rad_site;            // approximate radius of site
-		  float rad_inf;             // radius of influence of site
-		  core.CamParam init;             // initial camera dir,loc,sc and down for camera presets
-		    PVector dir;             // xyz coordinates of direction vector
-		    PVector loc;             // xyz coordinates of camera
-		    PVector sc;              // xyz coordinates of scene center
-		    PVector down;            // xyz coordinates of downward direction of camera
-		  int reset_frames;          // number of frames for resetting camera loc when inside radius of influence
+		// define which sites to build
+		/* All sites need the following variables for their constructors:
+		PVector center;          // center of site
+		float rad_site;            // approximate radius of site
+		float rad_inf;             // radius of influence of site
+		core.CamParam init;             // initial camera dir,loc,sc and down for camera presets
+		  PVector dir;             // xyz coordinates of direction vector
+		  PVector loc;             // xyz coordinates of camera
+		  PVector sc;              // xyz coordinates of scene center
+		  PVector down;            // xyz coordinates of downward direction of camera
+		int reset_frames;          // number of frames for resetting camera loc when inside radius of influence
 		 */
-		  	sites[0] = new NightWorld(this,new PVector(0,0,0), 5000, 100000,
-							new CamParam(new PVector(-1,0,0),new PVector(600,0,0),new PVector(0,0,0),new PVector(0,0,-1)), 120);
-		  	sites[1] = new RGBHallway(this,new PVector(-1000,-1000,0), 400, 10000,
-							new CamParam(new PVector(-1,0,0),new PVector(-1000,-1000,0),new PVector(-1200,-1000,0),new PVector(0,0,-1)), 120);
-			sites[2] = new GlassCube(this,new PVector(1000,1000,0), 400, 10000,
-		                    new CamParam(new PVector(-1,0,0),new PVector(1600,1000,0),new PVector(1000,1000,0),new PVector(0,0,-1)), 120);
-		  	sites[3] = new MengerSponge(this,new PVector(-2000,2000,0), 500, 10000,
-				  			new CamParam(new PVector(0,1,0),new PVector(-1730,1500,270),new PVector(-1730,2000,270),new PVector(0,0,-1)), 120);
-//		  	sites[4] = new Tower(this,new PVector(2500,-2500,0), 500, 10000,
-//					 		new CamParam(new PVector(0,0,-1),new PVector(2650,-2350,400),new PVector(2650,-2350,0),new PVector(0,-1,0)), 120);
-//			cam_ctrl = new CamCtrl(this,new CamParam(new PVector(0,0,-1),new PVector(2650,-2350,400),new PVector(2650,-2350,0),new PVector(0,-1,0)));
 
-		sites[4] = new MetaTower(this,new PVector(7500,-7500,0), 500, 10000,
-				new CamParam(new PVector(0,0,-1),new PVector(8625,-6375,1000),new PVector(8625,-6375,0),new PVector(0,-1,0)), 120);
-		  	// initialize camera object
-			cam_init.loc = new PVector(7000,-7500,300);
-      		cam_init.sc  = new PVector(7500,-7500,0);
-    	  	cam_init.dir = new PVector(1,0,0);
-	      	cam_init.down = new PVector(0,0,-1);
-		cam_ctrl = new CamCtrl(this,cam_init);
-		  
+		int site_indx = 1;
+		// NightWorld should always be rendered
+		sites[0] = new NightWorld(this,new PVector(0,0,0), 5000, 100000,
+					new CamParam(new PVector(-1,0,0),new PVector(600,0,0),new PVector(0,0,0),new PVector(0,0,-1)), reset_frames);
+		// loop through remaining sites
+		if (rgbhallway) {
+			sites[site_indx] = new RGBHallway(this, new PVector(-1000, -1000, 0), 400, radius_of_influence,
+					new CamParam(new PVector(-1, 0, 0), new PVector(-1000, -1000, 0), new PVector(-1200, -1000, 0), new PVector(0, 0, -1)), reset_frames);
+			site_indx++;
+			if (start_site.equals("rgbhallway")){
+				cam_init.dir = new PVector(-1,0,0);
+				cam_init.loc = new PVector(-1000,-1000,0);
+				cam_init.sc = new PVector(-1200,-1000,0);
+				cam_init.down = new PVector(0,0,-1);
+			}
+		}
+		if (glasscube){
+			sites[site_indx] = new GlassCube(this,new PVector(1000,1000,0), 400, radius_of_influence,
+					new CamParam(new PVector(-1,0,0),new PVector(1600,1000,0),new PVector(1000,1000,0),new PVector(0,0,-1)), reset_frames);
+			site_indx++;
+			if (start_site.equals("glasscube")){
+				cam_init.dir = new PVector(-1,0,0);
+				cam_init.loc = new PVector(1600,1000,0);
+				cam_init.sc = new PVector(1000,1000,0);
+				cam_init.down = new PVector(0,0,-1);
+			}
+		}
+		if (mengersponge){
+			sites[site_indx] = new MengerSponge(this,new PVector(-2000,2000,0), 500, radius_of_influence,
+					new CamParam(new PVector(0,1,0),new PVector(-1730,1500,270),new PVector(-1730,2000,270),new PVector(0,0,-1)), reset_frames);
+			site_indx++;
+			if (start_site.equals("mengersponge")){
+				cam_init.dir = new PVector(0,1,0);
+				cam_init.loc = new PVector(-1730,1500,270);
+				cam_init.sc = new PVector(-1730,2000,270);
+				cam_init.down = new PVector(0,0,-1);
+			}
+		}
+		if (tower){
+			sites[site_indx] = new Tower(this,new PVector(2500,-2500,0), 500, radius_of_influence,
+					new CamParam(new PVector(0,0,-1),new PVector(2650,-2350,400),new PVector(2650,-2350,0),new PVector(0,-1,0)), reset_frames);
+			site_indx++;
+			if (start_site.equals("tower")){
+				cam_init.dir = new PVector(0,0,-1);
+				cam_init.loc = new PVector(2650,-2350,400);
+				cam_init.sc = new PVector(2650,-2350,0);
+				cam_init.down = new PVector(0,-1,0);
+			}
+		}
+		if (metatower){
+			sites[site_indx] = new MetaTower(this,new PVector(5000,5000,0), 500, radius_of_influence,
+					new CamParam(new PVector(0,0,-1),new PVector(6125,6125,1000),new PVector(6125,6125,0),new PVector(0,-1,0)), reset_frames);
+			site_indx++;
+			if (start_site.equals("metatower")){
+				cam_init.dir = new PVector(0,1,0);
+				cam_init.loc = new PVector(6125,6125,300);
+				cam_init.sc  = new PVector(6125,6125,300);
+				cam_init.down = new PVector(0,0,-1);
+			}
+		}
+		num_sites = site_indx; // redefine num_sites to accurately reflect number of sites rendered
+		cam_ctrl = new CamCtrl(this,cam_init); // define initial camera site
 	}
 
 	public void draw(){
@@ -91,7 +150,7 @@ public class Tubeworld extends PApplet {
 		perspective(PApplet.PI/3,1.77777777778f,1,10000);
 
 		// find closest site	
-		dist_to_site[0] = 0;	// ensures we're always within radius of influence of tubeworld
+		dist_to_site[0] = 0;	// ensures we're always within radius of influence of NightWorld
 		min_dist = 100000;		// initialize to large value
 		for (int i = 1; i < num_sites; i++){
 			dist_to_site[i] = cam_ctrl.cam.curr.loc.dist(sites[i].center);
