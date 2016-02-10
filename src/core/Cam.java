@@ -271,7 +271,7 @@ public class Cam {
 	} 
 
 	/********************************* SMOOTH PURSUITS ****************************************/
-	public int smoothLinPursuit(CamParam dest, int reset_frames, int call_state, int return_state){
+	public int smoothLinPursuit(CamParam dest, float reset_frames, int call_state, int return_state){
 		/* move from curr dir/loc/sc/down vector to dest dir/loc/sc/down vector in a linear manner.*/
   
 		if (fr_count == 0){
@@ -279,13 +279,13 @@ public class Cam {
        		duration of move, which will take reset_frames.
 			*/
 			update.loc = PVector.sub(dest.loc,curr.loc,update.loc); // vector pointing from curr to dest location
-			update.loc.div((float) reset_frames);                   // update vector for location
+			update.loc.div(reset_frames);                   // update vector for location
        
 			update.sc = PVector.sub(dest.sc,curr.sc,update.sc);     // vector pointing from curr to dest sc
-			update.sc.div((float) reset_frames);                    // update vector for sc
+			update.sc.div(reset_frames);                    // update vector for sc
        
 			update.down = PVector.sub(dest.down,curr.down,update.down); // vector pointing from curr to dest down
-			update.down.div((float) reset_frames);                  // update vector for down
+			update.down.div(reset_frames);                  // update vector for down
 		}
 		if (fr_count < reset_frames-1){
 			curr.loc.add(update.loc);                               // update location
@@ -301,7 +301,7 @@ public class Cam {
 			return return_state;
 		}
 	}
-	public int smoothSphPursuit(CamParam dest, PVector center, int reset_frames, int call_state, int return_state){
+	public int smoothSphPursuit(CamParam dest, PVector center, float reset_frames, int call_state, int return_state){
 		/* move from curr dir/loc/sc/down vector to dest dir/loc/sc/down vector, scaled to be on the
     	surface of a sphere at a distance defined by dest, following motion in the positive theta direction
 		 */
@@ -321,14 +321,14 @@ public class Cam {
 			phi_init = getPhi(center,curr.loc);
 			phi_fin = getPhi(center,dest.loc);
 			// get increments to apply during update
-			dr = (r_fin-r_init)/((float) reset_frames);
-			dtheta = (PApplet.TWO_PI-(theta_init-theta_fin))/((float) reset_frames); // TWO_PI minus ensures it moves in positive theta dir
-			dphi = (phi_fin-phi_init)/((float) reset_frames);
+			dr = (r_fin-r_init)/reset_frames;
+			dtheta = (PApplet.TWO_PI-(theta_init-theta_fin))/reset_frames; 	// TWO_PI minus ensures it moves in positive theta dir
+			dphi = (phi_fin-phi_init)/reset_frames;
 			// get update vectors for sc and down
-			update.sc = PVector.sub(dest.sc,curr.sc,update.sc);      // vector pointing from cur sc to center
-			update.sc.div((float) reset_frames);                     // resize for proper updating
+			update.sc = PVector.sub(dest.sc,curr.sc,update.sc);      		 // vector pointing from cur sc to center
+			update.sc.div(reset_frames);                				     // resize for proper updating
 			update.down = PVector.sub(dest.down,curr.down,update.down);      // vector pointing from cur down to dest down
-			update.down.div((float) reset_frames);                     // resize for proper updating
+			update.down.div(reset_frames);				                     // resize for proper updating
 		}
 		if (fr_count < reset_frames-1){
 			sphMoveRadius(center,dr,"none");

@@ -10,11 +10,11 @@ public class GlassCube extends Site {
   
 	// Inherits from core.Site class
 	// parent, Tubeworld PApplet
-	// center
-	// rad_site
-	// rad_inf
+	// origin
+	// render_radius
 	// init
 	// reset_frames
+
 	public float side_length;
 	public 	ShimmerCube[] cubes;
 	public int num_cubes;
@@ -22,13 +22,12 @@ public class GlassCube extends Site {
 	public float dir_mult;
 	public float rot_rad;
 
-	public GlassCube(PApplet parent_, PVector center_, float rad_site_, float rad_inf_, CamParam init_, int reset_frames_){
+	public GlassCube(PApplet parent_, PVector origin_, float render_radius, CamParam init_, float reset_frames_){
 		// pass arguments to parent constructor
-		super(parent_,center_,rad_site_,rad_inf_,init_,reset_frames_);
-		side_length = 200;
-		num_cubes = 5;
-		// cube velocities found in cube class
-		cubes = new ShimmerCube[num_cubes];
+		super(parent_,origin_,render_radius,init_,reset_frames_);
+		side_length = 200;							// lenght of large cube side
+		num_cubes = 5;								// number of smaller cubes within larger cube
+		cubes = new ShimmerCube[num_cubes];			// cube velocities and sizes found in cube class
 		for (int i = 0; i < num_cubes; i++){
 			cubes[i] = new ShimmerCube(parent,side_length,parent.random(20,30));
 		}
@@ -52,7 +51,7 @@ public class GlassCube extends Site {
 	/************************************ DRAW SITE *****************************************/
 	public void drawSite(){
 		parent.pushMatrix();
-		parent.translate(center.x, center.y, center.z);
+		parent.translate(origin.x, origin.y, origin.z);
 		// draw colliding cubes
 		for (int i = 0; i < num_cubes; i++){
 			cubes[i].drawCube();
@@ -76,12 +75,12 @@ public class GlassCube extends Site {
 				rot_rad = PApplet.PI/246;
 			}
 			if (fr_count < reset_frames) {
-				state = cam.smoothSphPursuit(init,center,reset_frames,2,2);
+				state = cam.smoothSphPursuit(init,origin,reset_frames,2,2);
 				fr_count++;
 			} else if (fr_count >= reset_frames) {
-				cam.sphMoveTheta(center,PApplet.PI/1024,"center");
-				theta = cam.getTheta(center,cam.curr.loc);
-				cam.sphSetPhi(center,PApplet.PI/2+PApplet.PI/8*PApplet.sin(theta),"none");
+				cam.sphMoveTheta(origin,PApplet.PI/1024,"center");
+				theta = cam.getTheta(origin,cam.curr.loc);
+				cam.sphSetPhi(origin,PApplet.PI/2+PApplet.PI/8*PApplet.sin(theta),"none");
 				
 				// allow some amount of camera control; exit if other key press after initial reset
 				// update speed multipliers

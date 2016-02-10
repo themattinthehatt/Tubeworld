@@ -20,9 +20,8 @@ public class MetaTower extends Site {
 
     // Inherits from core.Site class
     // parent, Tubeworld PApplet
-    // center
-    // rad_site
-    // rad_inf
+    // origin
+    // render_radius
     // init
     // reset_frames
 
@@ -99,15 +98,15 @@ public class MetaTower extends Site {
     private float zf;					// temp z location in drawing method
 
     /************************************* CONSTRUCTOR ***************************************/
-    public MetaTower(PApplet parent_, PVector center_, float rad_site_, float rad_inf_, CamParam init_, int reset_frames_) {
+    public MetaTower(PApplet parent_, PVector origin_, float render_radius_, CamParam init_, float reset_frames_) {
 
         // pass arguments to parent constructor; set Site properties
-        super(parent_, center_, rad_site_, rad_inf_, init_, reset_frames_);
+        super(parent_, origin_, render_radius_, init_, reset_frames_);
 
         // for individual tower structures
         num_beams_x = 3;                // length of x side in number of beams
         num_beams_y = 3;                // length of y side in number of beams
-        num_beams_z = 3;               // length of z side in number of beams
+        num_beams_z = 3;                // length of z side in number of beams
         beam_side_width = 5;            // width (~circumference) of beams (in pixels)
         beam_side_len = 50;             // length of beam (JUST distance between nodes; different than length in tower.TowerBeam class)
         tower_side_len_x = ((float) num_beams_x)*beam_side_len;        // width (~circumference) of towers (should be multiple of beam_side_len)
@@ -192,7 +191,7 @@ public class MetaTower extends Site {
              * x/y values are x/y times (height+width) of towers to take junctions into account
              */
             tower[i] = new Tower(parent_,new PVector(((float) x)*(tower_side_len_z+tower_side_len_x),((float) y)*(tower_side_len_z+tower_side_len_y),0),
-                                                     5000,1000,init,120);
+                                                     render_radius,init,120);
             // set necessary properties (if num_beams changes there should be a reset of is_occupied)
             tower[i].num_beams_x = num_beams_x;
             tower[i].num_beams_y = num_beams_y;
@@ -230,14 +229,14 @@ public class MetaTower extends Site {
 	    PVector down;            // xyz coordinates of downward direction of camera
 	    */
         // reset parts of init to be at the center, given the number of towers
-        init.loc = new PVector(center.x+meta_total_side_len_x/2,center.y+meta_total_side_len_y/2,center.z+4000);
-        init.sc  = new PVector(center.x+meta_total_side_len_x/2,center.y+meta_total_side_len_y/2,center.z);
+        init.loc = new PVector(origin.x+meta_total_side_len_x/2,origin.y+meta_total_side_len_y/2,origin.z+4000);
+        init.sc  = new PVector(origin.x+meta_total_side_len_x/2,origin.y+meta_total_side_len_y/2,origin.z);
         init.dir = new PVector(0,0,-1);
         init.down = new PVector(0,-1,0);
-        cam_center = new PVector(center.x+meta_total_side_len_x/2,center.y+meta_total_side_len_x/2,center.z);
+        cam_center = new PVector(origin.x+meta_total_side_len_x/2,origin.y+meta_total_side_len_x/2,origin.z);
         preset_cam = new CamParam(new PVector(-1,0,0),
-                new PVector(center.x+2*meta_total_side_len_x,center.y+meta_total_side_len_y/2,center.z+1000),
-                new PVector(center.x+meta_total_side_len_x/2,center.y+meta_total_side_len_y/2,center.z),
+                new PVector(origin.x+2*meta_total_side_len_x,origin.y+meta_total_side_len_y/2,origin.z+1000),
+                new PVector(origin.x+meta_total_side_len_x/2,origin.y+meta_total_side_len_y/2,origin.z),
                 new PVector(0,0,-1));
     }
 
@@ -523,7 +522,7 @@ public class MetaTower extends Site {
 
         // reset necessary properties
         tower[tower_indx].tower_orientation = orientation; // start off moving in +z direction
-        tower[tower_indx].center = new PVector(x*(tower_side_len_z+tower_side_len_x),
+        tower[tower_indx].origin = new PVector(x*(tower_side_len_z+tower_side_len_x),
                                                y*(tower_side_len_z+tower_side_len_y),
                                                z*(tower_side_len_z+tower_side_len_x)-tower_side_len_x);
 
@@ -531,7 +530,7 @@ public class MetaTower extends Site {
         switch(orientation){
             case 0:
                 // +x direction
-                tower[tower_indx].center.x = tower[tower_indx].center.x+tower_side_len_x;
+                tower[tower_indx].origin.x = tower[tower_indx].origin.x+tower_side_len_x;
                 break;
             case 1:
                 // -x direction
@@ -539,7 +538,7 @@ public class MetaTower extends Site {
                 break;
             case 2:
                 // +y direction
-                tower[tower_indx].center.y = tower[tower_indx].center.y+tower_side_len_y;
+                tower[tower_indx].origin.y = tower[tower_indx].origin.y+tower_side_len_y;
                 break;
             case 3:
                 // -y direction
@@ -547,7 +546,7 @@ public class MetaTower extends Site {
                 break;
             case 4:
                 // +z direction
-                tower[tower_indx].center.z = tower[tower_indx].center.z+tower_side_len_x;
+                tower[tower_indx].origin.z = tower[tower_indx].origin.z+tower_side_len_x;
                 break;
         }
 
@@ -596,7 +595,7 @@ public class MetaTower extends Site {
     public void drawSite(){
 
         parent.pushMatrix();
-        parent.translate(center.x, center.y, center.z);
+        parent.translate(origin.x, origin.y, origin.z);
 
         // draw bounding box for initial towers; take tower orientation into account
         xf = tower_side_len_x + 2 * beam_side_len;  // temp variable to store dim of bounding box
@@ -757,7 +756,7 @@ public class MetaTower extends Site {
                 tower_locs[i][1] = y;     // keep track of tower target location in meta_is_occupied
                 tower_locs[i][2] = z+1;   // keep track of tower target location in meta_is_occupied
                 tower_locs[i][3] = z+1;
-                tower[i].center = new PVector(x*(tower_side_len_z+tower_side_len_x),
+                tower[i].origin = new PVector(x*(tower_side_len_z+tower_side_len_x),
                                               y*(tower_side_len_z+tower_side_len_y),0);
                 valid_indices = false;    // reset
             } else {
@@ -786,10 +785,10 @@ public class MetaTower extends Site {
         }
 
         // reinitialize cam presets
-        cam_center = new PVector(center.x+meta_total_side_len_x/2,center.y+meta_total_side_len_x/2,center.z);
+        cam_center = new PVector(origin.x+meta_total_side_len_x/2,origin.y+meta_total_side_len_x/2,origin.z);
         preset_cam = new CamParam(new PVector(-1,0,0),
-                new PVector(center.x+2*meta_total_side_len_x,center.y+meta_total_side_len_y/2,center.z+500),
-                new PVector(center.x+meta_total_side_len_x/2,center.y+meta_total_side_len_y/2,center.z),
+                new PVector(origin.x+2*meta_total_side_len_x,origin.y+meta_total_side_len_y/2,origin.z+500),
+                new PVector(origin.x+meta_total_side_len_x/2,origin.y+meta_total_side_len_y/2,origin.z),
                 new PVector(0,0,-1));
     }
 }

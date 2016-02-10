@@ -11,14 +11,14 @@ import processing.core.PVector;
  */
 
 public class MengerSponge extends Site {
-  
+
 	// Inherits from core.Site class
 	// parent, Tubeworld PApplet
-	// center
-	// rad_site
-	// rad_inf
+	// origin
+	// render_radius
 	// init
 	// reset_frames
+
 	public float side_len;
 	public MengerCube[] cubes;
 	public int fr_count;
@@ -31,12 +31,10 @@ public class MengerSponge extends Site {
 	public float cube_side_len;
 	public PVector cam_center;			// for camera updates
 
-	public MengerSponge(PApplet parent_, PVector center_, float rad_site_, float rad_inf_, CamParam init_, int reset_frames_){
+	public MengerSponge(PApplet parent_, PVector origin_, float render_radius_, CamParam init_, float reset_frames_){
 
 		// pass arguments to parent constructor
-		super(parent_,center_,rad_site_,rad_inf_,init_,reset_frames_);
-		// camera properties
-		fr_count = 0;
+		super(parent_,origin_,render_radius_,init_,reset_frames_);
 		
 		// define parameters for cube
 		side_len = 540; // side_len of whole sponge
@@ -133,13 +131,14 @@ public class MengerSponge extends Site {
 		} // end cube iteration
 
 		// camera stuff
+		fr_count = 0;
 		// redefine init based on size of sponge
 		init.dir = new PVector(-1,0,0);
 		init.down = new PVector(0,0,-1);
-		init.loc = new PVector(center.x+2*side_len, center.y+side_len/2, center.z+side_len/2);
-		init.sc = new PVector(center.x+side_len/2, center.y+side_len/2, center.z+side_len/2);
+		init.loc = new PVector(origin.x+2*side_len, origin.y+side_len/2, origin.z+side_len/2);
+		init.sc = new PVector(origin.x+side_len/2, origin.y+side_len/2, origin.z+side_len/2);
 		// define another center of the sponge for camera presets ('center' property should really be called origin)
-		cam_center = new PVector(center.x+side_len/2,center.y+side_len/2,center.z+side_len/2);
+		cam_center = new PVector(origin.x+side_len/2,origin.y+side_len/2,origin.z+side_len/2);
 
 	} // end Constructor
 	
@@ -150,7 +149,7 @@ public class MengerSponge extends Site {
 	/************************************ DRAW SITE *****************************************/
 	public void drawSite(){
 		parent.pushMatrix();
-		parent.translate(center.x,center.y,center.z);
+		parent.translate(origin.x,origin.y,origin.z);
 
 		// draw cubes
 		for (int i = 0; i < num_cubes_rendered; i++){

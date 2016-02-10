@@ -10,21 +10,21 @@ public class RGBHallway extends Site {
   
 	// Inherits from core.Site class
 	// parent, Tubeworld PApplet
-	// center
-	// rad_site
-	// rad_inf
+	// origin
+	// render_radius
 	// init
 	// reset_frames
+
 	public float rect_width;
 	public float hall_width;
 	public int num_rects;
-	public int fr_count;
+	public float fr_count;
 	public float dir_mult;
 	public float rot_rad;
 
-	public RGBHallway(PApplet parent_, PVector center_, float rad_site_, float rad_inf_, CamParam init_, int reset_frames_){
+	public RGBHallway(PApplet parent_, PVector origin_, float render_radius, CamParam init_, float reset_frames_){
 		// pass arguments to parent constructor
-		super(parent_,center_,rad_site_,rad_inf_,init_,reset_frames_);
+		super(parent_,origin_,render_radius,init_,reset_frames_);
 		rect_width = 200;
 		hall_width = 100;
 		num_rects = 20;
@@ -40,7 +40,7 @@ public class RGBHallway extends Site {
 		
 		parent.pushMatrix();
 		//set initial center
-		parent.translate(center.x, center.y, center.z);
+		parent.translate(origin.x, origin.y, origin.z);
     
 		for (int i = 0; i < num_rects; i++) {
 			parent.translate(-rect_width,hall_width/2,0);
@@ -115,8 +115,8 @@ public class RGBHallway extends Site {
 					fr_count = 0;
 				}
 				// reset position before running out of hallway
-				if (cam.curr.loc.x < center.x - rect_width*10){
-					cam.curr.loc.x = center.x-rect_width;
+				if (cam.curr.loc.x < origin.x - rect_width*10){
+					cam.curr.loc.x = origin.x-rect_width;
 				}
 			}
 		}

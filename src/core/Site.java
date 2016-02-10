@@ -8,18 +8,16 @@ import processing.core.PVector;
 
 public abstract class Site {
 	
-	public PApplet parent;			 // PApplet parent
-	public PVector center;          // center of site
-	public float rad_site;          // approximate radius of site
-	public float rad_inf;           // radius of influence of site
+	public PApplet parent;			// PApplet parent
+	public PVector origin;          // origin of site
+	public float render_radius;     // site will be rendered when camera is within this distance from origin
 	public CamParam init;           // initial camera dir,loc,sc and down for camera presets
-	public int reset_frames;        // number of frames for resetting camera loc when inside radius of influence
+	public float reset_frames;        // number of frames for resetting camera loc when inside render_radius
 	
-	public Site(PApplet parent_, PVector center_, float rad_site_, float rad_inf_, CamParam init_, int reset_frames_){
+	public Site(PApplet parent_, PVector origin_, float render_radius_, CamParam init_, float reset_frames_){
 		parent = parent_;
-		center = center_;
-		rad_site = rad_site_;
-		rad_inf = rad_inf_;
+		origin = origin_;
+		render_radius = render_radius_;
 		init = init_;
 		reset_frames = reset_frames_;
 	}

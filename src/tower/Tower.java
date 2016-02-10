@@ -15,9 +15,8 @@ public class Tower extends Site {
 	
 	// Inherits from core.Site class
 	// parent, Tubeworld PApplet
-	// center
-	// rad_site
-	// rad_inf
+	// origin
+	// render_radius
 	// init
 	// reset_frames
 	 
@@ -40,7 +39,7 @@ public class Tower extends Site {
 	// for collision detection and dynamics
 	public boolean[][][] is_occupied;	// logical array for collision detection
 	private float num_poss_pos;			// keep track of number of possible positions to later determine trans_probs
-	private float[] trans_probs;			// 0 +x; 1 -x; 2 +y; 3 -y;
+	private float[] trans_probs;		// 0 +x; 1 -x; 2 +y; 3 -y;
 	private float rand;					// random number for determining location of new beams
 	private int x;						// temp x location in is_occupied
 	private int y;						// temp y location in is_occupied
@@ -69,25 +68,25 @@ public class Tower extends Site {
 	public float top_level_extending;	// frame count for camera updates
 	
 	/************************************ CONSTRUCTOR ***************************************/
-	public Tower(PApplet parent_, PVector center_, float rad_site_, float rad_inf_, CamParam init_, int reset_frames_){
+	public Tower(PApplet parent_, PVector origin_, float render_radius_, CamParam init_, float reset_frames_){
 
 		// pass arguments to parent constructor; set Site properties
-		super(parent_,center_,rad_site_,rad_inf_,init_,reset_frames_);
+		super(parent_,origin_,render_radius_,init_,reset_frames_);
 		
 		// initialize tower structure properties
-		num_beams_x = 3;
-		num_beams_y = 3;
-		num_beams_z = 50; 		// total number of levels to draw
+		num_beams_x = 32;
+		num_beams_y = 18;
+		num_beams_z = 2; 		// total number of levels to draw
 		beam_side_width = 5; 	// (in pixels)
 		beam_side_len = 50;  	// (in pixels)
 		total_side_len_x = ((float) num_beams_x)*beam_side_len;
 		total_side_len_y = ((float) num_beams_y)*beam_side_len;
-		num_girders = 3;
+		num_girders = 1;
 		girder = new TowerGirder[num_girders];
 		tower_orientation = 4;
 		// reset parts of init to be at the center, given the number of beams
-		init.loc = new PVector(center.x+total_side_len_x/2,center.y+total_side_len_y/2,center.z+600);
-		init.sc  = new PVector(center.x+total_side_len_x/2,center.y+total_side_len_y/2,center.z);
+		init.loc = new PVector(origin.x+total_side_len_x/2,origin.y+total_side_len_y/2,origin.z+600);
+		init.sc  = new PVector(origin.x+total_side_len_x/2,origin.y+total_side_len_y/2,origin.z);
 		init.dir = new PVector(0,0,-1);
 		init.down = new PVector(0,-1,0);
 		
@@ -151,10 +150,10 @@ public class Tower extends Site {
 	    PVector sc;              // xyz coordinates of scene center
 	    PVector down;            // xyz coordinates of downward direction of camera
 	    */
-		cam_center = new PVector(center.x+total_side_len_x/2,center.y+total_side_len_y/2,center.z);
+		cam_center = new PVector(origin.x+total_side_len_x/2,origin.y+total_side_len_y/2,origin.z);
 		preset_cam = new CamParam(new PVector(-1,0,0),
-					 new PVector(center.x+2*total_side_len_x,center.y+total_side_len_y/2,center.z+500),
-					 new PVector(center.x+total_side_len_x/2,center.y+total_side_len_y/2,center.z),
+					 new PVector(origin.x+2*total_side_len_x,origin.y+total_side_len_y/2,origin.z+500),
+					 new PVector(origin.x+total_side_len_x/2,origin.y+total_side_len_y/2,origin.z),
 					 new PVector(0,0,-1));		
 	}
   
@@ -467,64 +466,64 @@ public class Tower extends Site {
 	public void drawSite(){
 		
 		parent.pushMatrix();
-		parent.translate(center.x, center.y, center.z);
+		parent.translate(origin.x, origin.y, origin.z);
 
-//		// draw bounding box; take tower orientation into account
-//		xf = total_side_len_x + 2*beam_side_len;
-//		yf = total_side_len_y + 2*beam_side_len;
-//		zf = 0;
-//
-//		switch (tower_orientation) {
-//			case 0:
-//				// moving in +x direction
-//				// +x becomes +y, +y becomes +z, +z becomes +x
-//				parent.pushMatrix();
-//				parent.translate(0, total_side_len_x / 2, total_side_len_y / 2);
-//				parent.stroke(255, 255, 255);
-//				parent.fill(0, 0, 0, 0);
-//				parent.box(zf, xf, yf);
-//				parent.popMatrix();
-//				break;
-//			case 1:
-//				// moving in -x direction
-//				// +x becomes +y, +y becomes +z, +z becomes -x
-//				parent.pushMatrix();
-//				parent.translate(0, total_side_len_x / 2, total_side_len_y / 2);
-//				parent.stroke(255, 255, 255);
-//				parent.fill(0, 0, 0, 0);
-//				parent.box(-zf, xf, yf);
-//				parent.popMatrix();
-//				break;
-//			case 2:
-//				// moving in +y direction
-//				// x stays the same, +y becomes +z, +z becomes +y
-//				parent.pushMatrix();
-//				parent.translate(total_side_len_x / 2, 0, total_side_len_y / 2);
-//				parent.stroke(255, 255, 255);
-//				parent.fill(0, 0, 0, 0);
-//				parent.box(xf, zf, yf);
-//				parent.popMatrix();
-//				break;
-//			case 3:
-//				// moving in -y direction
-//				// x stays the same, +y becomes +z, +z becomes -y
-//				parent.pushMatrix();
-//				parent.translate(total_side_len_x / 2, 0, total_side_len_y / 2);
-//				parent.stroke(255, 255, 255);
-//				parent.fill(0, 0, 0, 0);
-//				parent.box(xf, -zf, yf);
-//				parent.popMatrix();
-//				break;
-//			case 4:
-//				// xyz coordinates stay the same
-//				parent.pushMatrix();
-//				parent.translate(total_side_len_x / 2, total_side_len_y / 2, 0);
-//				parent.stroke(255, 255, 255);
-//				parent.fill(0, 0, 0, 0);
-//				parent.box(xf, yf, zf);
-//				parent.popMatrix();
-//				break;
-//		}
+		// draw bounding box; take tower orientation into account
+		xf = total_side_len_x + 2*beam_side_len;
+		yf = total_side_len_y + 2*beam_side_len;
+		zf = 0;
+
+		switch (tower_orientation) {
+			case 0:
+				// moving in +x direction
+				// +x becomes +y, +y becomes +z, +z becomes +x
+				parent.pushMatrix();
+				parent.translate(0, total_side_len_x / 2, total_side_len_y / 2);
+				parent.stroke(255, 255, 255);
+				parent.fill(0, 0, 0, 0);
+				parent.box(zf, xf, yf);
+				parent.popMatrix();
+				break;
+			case 1:
+				// moving in -x direction
+				// +x becomes +y, +y becomes +z, +z becomes -x
+				parent.pushMatrix();
+				parent.translate(0, total_side_len_x / 2, total_side_len_y / 2);
+				parent.stroke(255, 255, 255);
+				parent.fill(0, 0, 0, 0);
+				parent.box(-zf, xf, yf);
+				parent.popMatrix();
+				break;
+			case 2:
+				// moving in +y direction
+				// x stays the same, +y becomes +z, +z becomes +y
+				parent.pushMatrix();
+				parent.translate(total_side_len_x / 2, 0, total_side_len_y / 2);
+				parent.stroke(255, 255, 255);
+				parent.fill(0, 0, 0, 0);
+				parent.box(xf, zf, yf);
+				parent.popMatrix();
+				break;
+			case 3:
+				// moving in -y direction
+				// x stays the same, +y becomes +z, +z becomes -y
+				parent.pushMatrix();
+				parent.translate(total_side_len_x / 2, 0, total_side_len_y / 2);
+				parent.stroke(255, 255, 255);
+				parent.fill(0, 0, 0, 0);
+				parent.box(xf, -zf, yf);
+				parent.popMatrix();
+				break;
+			case 4:
+				// xyz coordinates stay the same
+				parent.pushMatrix();
+				parent.translate(total_side_len_x / 2, total_side_len_y / 2, 0);
+				parent.stroke(255, 255, 255);
+				parent.fill(0, 0, 0, 0);
+				parent.box(xf, yf, zf);
+				parent.popMatrix();
+				break;
+		}
 		
 		// draw girders
 		for (int i = 0; i < num_girders; i++){
@@ -608,10 +607,10 @@ public class Tower extends Site {
 		
 		// reinitialize cam presets
 		cam_fr_count = 0;
-		cam_center = new PVector(center.x+total_side_len_x/2,center.y+total_side_len_y/2,center.z);
+		cam_center = new PVector(origin.x+total_side_len_x/2,origin.y+total_side_len_y/2,origin.z);
 		preset_cam = new CamParam(new PVector(-1,0,0), 
-					 new PVector(center.x+2*total_side_len_x,center.y+total_side_len_y/2,cam_center.z+500),
-					 new PVector(center.x+total_side_len_x/2,center.y+total_side_len_y/2,center.z),
+					 new PVector(origin.x+2*total_side_len_x,origin.y+total_side_len_y/2,cam_center.z+500),
+					 new PVector(origin.x+total_side_len_x/2,origin.y+total_side_len_y/2,origin.z),
 					 new PVector(0,0,-1));
 	}
 }

@@ -10,15 +10,14 @@ public class NightWorld extends Site {
 
     // Inherits from core.Site class
     // parent, Tubeworld PApplet
-    // center
-    // rad_site
-    // rad_inf
+    // origin
+    // render_radius
     // init
     // reset_frames
 
-    public NightWorld(PApplet parent_, PVector center_, float rad_site_, float rad_inf_, CamParam init_, int reset_frames_){
+    public NightWorld(PApplet parent_, PVector origin_, float render_radius_, CamParam init_, float reset_frames_){
         // pass arguments to parent constructor
-        super(parent_,center_,rad_site_,rad_inf_,init_,reset_frames_);
+        super(parent_,origin_,render_radius_,init_,reset_frames_);
     }
 
     public void updatePhysics(boolean[] keys_pressed, boolean[] keys_toggled){
