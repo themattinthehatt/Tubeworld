@@ -12,7 +12,7 @@ public abstract class Site {
 	public PVector origin;          // origin of site
 	public float render_radius;     // site will be rendered when camera is within this distance from origin
 	public CamParam init;           // initial camera dir,loc,sc and down for camera presets
-	public float reset_frames;        // number of frames for resetting camera loc when inside render_radius
+	public float reset_frames;      // number of frames for resetting camera loc when inside render_radius
 	
 	public Site(PApplet parent_, PVector origin_, float render_radius_, CamParam init_, float reset_frames_){
 		parent = parent_;

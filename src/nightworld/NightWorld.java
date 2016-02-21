@@ -59,22 +59,26 @@ public class NightWorld extends Site {
         /*********** draw origin **************/
         parent.pushMatrix();
         parent.translate(25,0,0);
+        parent.stroke(255,0,0);
         parent.fill(255,0,0);
         parent.box(50,5,5);
         parent.popMatrix();
 
         parent.pushMatrix();
         parent.translate(0,25,0);
+        parent.stroke(0,255,0);
         parent.fill(0,255,0);
         parent.box(5,50,5);
         parent.popMatrix();
 
         parent.pushMatrix();
         parent.translate(0,0,25);
+        parent.stroke(0,0,255);
         parent.fill(0,0,255);
         parent.box(5,5,50);
         parent.popMatrix();
 
+        parent.stroke(255,255,255);
         parent.fill(255,255,255);
         parent.box(5,5,5);
 

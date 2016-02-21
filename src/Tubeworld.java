@@ -6,6 +6,7 @@ import core.KeyHandler;
 import core.Site;
 
 import nightworld.NightWorld;
+import recursivetower.RecursiveTower;
 import rgbhallway.RGBHallway;
 import glasscube.GlassCube;
 import mengersponge.MengerSponge;
@@ -13,9 +14,9 @@ import tower.Tower;
 import metatower.MetaTower;
 
 /* TODO
- * treat frame count variables consistently
  * make F_ presets to move to specified sites
- * resolve origin/center confusion
+ * put skybox options in Nightworld class
+ * put reset cam option to origin
  */
 
 public class Tubeworld extends PApplet {
@@ -36,7 +37,7 @@ public class Tubeworld extends PApplet {
 	}
 	
 	public void settings() {
-		  size(800, 600, "processing.opengl.PGraphics3D");
+		  size(800, 800, "processing.opengl.PGraphics3D");
 //		size(800,600,"processing.opengl.OPENGL");
 	}
 	
@@ -47,12 +48,13 @@ public class Tubeworld extends PApplet {
 		key_handler = new KeyHandler(this);
 
 		// define which sites to render
-		boolean rgbhallway = true;
-		boolean glasscube = true;
-		boolean mengersponge = true;
-		boolean tower = true;
+		boolean rgbhallway = false;
+		boolean glasscube = false;
+		boolean mengersponge = false;
+		boolean tower = false;
 		boolean metatower = false;
-		String start_site = "tower";
+		boolean recursivetower = true;
+		String start_site = "recursivetower";
 
 		// common input to constructors if desired
 		float render_radius = 10000; 	// distance beyond which site is not rendered
@@ -137,6 +139,19 @@ public class Tubeworld extends PApplet {
 				cam_init.down = new PVector(0,0,-1);
 			}
 		}
+		if (recursivetower){
+			sites[site_indx] = new RecursiveTower(this,new PVector(5000,5000,0), render_radius,
+					new CamParam(new PVector(0,0,-1),new PVector(6125,6125,1000),new PVector(6125,6125,0),new PVector(0,-1,0)), reset_frames);
+					// set up recursion
+					((RecursiveTower) sites[site_indx]).reinitializeLinkType("RecursiveTower",3,3,5,3,96,0);
+			site_indx++;
+			if (start_site.equals("recursivetower")){
+				cam_init.dir = new PVector(0,1,0);
+				cam_init.loc = new PVector(6125,6125,300);
+				cam_init.sc  = new PVector(6125,6125,300);
+				cam_init.down = new PVector(0,0,-1);
+			}
+		}
 		num_sites = site_indx; // redefine num_sites to accurately reflect number of sites rendered
 		cam_ctrl = new CamCtrl(this,cam_init); // define initial camera site
 	}
@@ -146,7 +161,7 @@ public class Tubeworld extends PApplet {
 		// note: lights have to be called before drawing takes place
 		cam_ctrl.update(key_handler.keys_pressed,key_handler.keys_toggled,sites[active_site_indx]);
 		// push back far end of viewing plane
-		perspective(PApplet.PI/3,1.77777777778f,1,10000);
+//		perspective(PApplet.PI/3,1.77777777778f,1,10000);
 
 		// find closest site	
 		dist_to_site[0] = 0;	// ensures we're always within radius of influence of NightWorld
@@ -177,4 +192,5 @@ public class Tubeworld extends PApplet {
 	public void keyReleased(){
 		key_handler.key_released();
 	}
+
 } // end Tubeworld class
