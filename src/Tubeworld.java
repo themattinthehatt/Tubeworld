@@ -143,7 +143,7 @@ public class Tubeworld extends PApplet {
 			sites[site_indx] = new RecursiveTower(this,new PVector(5000,5000,0), render_radius,
 					new CamParam(new PVector(0,0,-1),new PVector(6125,6125,1000),new PVector(6125,6125,0),new PVector(0,-1,0)), reset_frames);
 					// set up recursion
-					((RecursiveTower) sites[site_indx]).reinitializeLinkType("RecursiveTower",3,3,5,3,96,0);
+//					((RecursiveTower) sites[site_indx]).reinitializeLinkType("RecursiveTower",3,3,5,3,96,0);
 			site_indx++;
 			if (start_site.equals("recursivetower")){
 				cam_init.dir = new PVector(0,1,0);
@@ -159,10 +159,11 @@ public class Tubeworld extends PApplet {
 	public void draw(){
 
 		// note: lights have to be called before drawing takes place
+		sites[0].updateCam(cam_ctrl.cam,0,key_handler.keys_pressed,key_handler.keys_toggled); // draw skybox
 		cam_ctrl.update(key_handler.keys_pressed,key_handler.keys_toggled,sites[active_site_indx]);
 		// push back far end of viewing plane
 //		perspective(PApplet.PI/3,1.77777777778f,1,10000);
-
+		perspective(PApplet.PI/3,1.01f,1,10000);
 		// find closest site	
 		dist_to_site[0] = 0;	// ensures we're always within radius of influence of NightWorld
 		min_dist = 100000;		// initialize to large value

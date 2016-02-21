@@ -83,6 +83,8 @@ public class KeyHandler {
 			keys_pressed[32] = true;  // pause
 		} else if (parent.keyCode == KeyEvent.VK_BACK_SPACE) {
 			keys_pressed[8] = true;   // reset
+		} else if (parent.keyCode == KeyEvent.VK_TAB) {
+			keys_pressed[9] = true;
 		}
 		// speed multipliers
 		if (parent.key == 'e') {
@@ -141,6 +143,9 @@ public class KeyHandler {
 		} else if (parent.keyCode == KeyEvent.VK_BACK_SPACE) {
 			keys_pressed[8] = false;   // reset
 			keys_toggled[8] = !keys_toggled[8];
+		} else if (parent.keyCode == KeyEvent.VK_TAB) {
+			keys_pressed[9] = false;
+			keys_toggled[9] = !keys_toggled[9];
 		}
 		// speed multipliers
 		if (parent.key == 'e') {
