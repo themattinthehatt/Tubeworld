@@ -13,10 +13,10 @@ import mengersponge.MengerSponge;
 import tower.Tower;
 import metatower.MetaTower;
 
+import java.awt.event.KeyEvent;
+
 /* TODO
- * make F_ presets to move to specified sites
- * put skybox options in Nightworld class
- * put reset cam option to origin
+ * put site presets and skybox options in own class
  */
 
 public class Tubeworld extends PApplet {
@@ -48,9 +48,9 @@ public class Tubeworld extends PApplet {
 		key_handler = new KeyHandler(this);
 
 		// define which sites to render
-		boolean rgbhallway = false;
-		boolean glasscube = false;
-		boolean mengersponge = false;
+		boolean rgbhallway = true;
+		boolean glasscube = true;
+		boolean mengersponge = true;
 		boolean tower = false;
 		boolean metatower = false;
 		boolean recursivetower = true;
@@ -159,15 +159,15 @@ public class Tubeworld extends PApplet {
 	public void draw(){
 
 		// note: lights have to be called before drawing takes place
-		sites[0].updateCam(cam_ctrl.cam,0,key_handler.keys_pressed,key_handler.keys_toggled); // draw skybox
+
 		cam_ctrl.update(key_handler.keys_pressed,key_handler.keys_toggled,sites[active_site_indx]);
 		// push back far end of viewing plane
 //		perspective(PApplet.PI/3,1.77777777778f,1,10000);
 		perspective(PApplet.PI/3,1.01f,1,10000);
-		// find closest site	
-		dist_to_site[0] = 0;	// ensures we're always within radius of influence of NightWorld
+
+		// find closest site
 		min_dist = 100000;		// initialize to large value
-		for (int i = 1; i < num_sites; i++){
+		for (int i = 0; i < num_sites; i++){
 			dist_to_site[i] = cam_ctrl.cam.curr.loc.dist(sites[i].origin);
 			// update minimum distance
 			if (dist_to_site[i] < min_dist){
@@ -181,6 +181,59 @@ public class Tubeworld extends PApplet {
 			if (dist_to_site[i] < sites[i].render_radius){
 				sites[i].updatePhysics(key_handler.keys_pressed,key_handler.keys_toggled);
 				sites[i].drawSite();
+			}
+		}
+
+		// return to site origins if shift+(0-9) key combo is pressed
+		if (key_handler.keys_pressed[41]){
+			if (num_sites >= 1) {
+				cam_ctrl.state = 0;		// set state so that we do a smooth linear movement to init
+				active_site_indx = 0;	// set which site to reset to
+			}
+		} else if (key_handler.keys_pressed[33]){
+			if (num_sites >= 2) {
+				cam_ctrl.state = 0;		// set state so that we do a smooth linear movement to init
+				active_site_indx = 1;	// set which site to reset to
+			}
+		} else if (key_handler.keys_pressed[64]){
+			if (num_sites >= 3) {
+				cam_ctrl.state = 0;		// set state so that we do a smooth linear movement to init
+				active_site_indx = 2;	// set which site to reset to
+			}
+		} else if (key_handler.keys_pressed[35]){
+			if (num_sites >= 4) {
+				cam_ctrl.state = 0;		// set state so that we do a smooth linear movement to init
+				active_site_indx = 3;	// set which site to reset to
+			}
+		} else if (key_handler.keys_pressed[36]){
+			if (num_sites >= 5) {
+				cam_ctrl.state = 0;		// set state so that we do a smooth linear movement to init
+				active_site_indx = 4;	// set which site to reset to
+			}
+		} else if (key_handler.keys_pressed[37]){
+			if (num_sites >= 6) {
+				cam_ctrl.state = 0;		// set state so that we do a smooth linear movement to init
+				active_site_indx = 5;	// set which site to reset to
+			}
+		} else if (key_handler.keys_pressed[94]){
+			if (num_sites >= 7) {
+				cam_ctrl.state = 0;		// set state so that we do a smooth linear movement to init
+				active_site_indx = 6;	// set which site to reset to
+			}
+		} else if (key_handler.keys_pressed[38]){
+			if (num_sites >= 8) {
+				cam_ctrl.state = 0;		// set state so that we do a smooth linear movement to init
+				active_site_indx = 7;	// set which site to reset to
+			}
+		} else if (key_handler.keys_pressed[42]){
+			if (num_sites >= 9) {
+				cam_ctrl.state = 0;		// set state so that we do a smooth linear movement to init
+				active_site_indx = 8;	// set which site to reset to
+			}
+		} else if (key_handler.keys_pressed[40]){
+			if (num_sites >= 10) {
+				cam_ctrl.state = 0;		// set state so that we do a smooth linear movement to init
+				active_site_indx = 9;	// set which site to reset to
 			}
 		}
 	}

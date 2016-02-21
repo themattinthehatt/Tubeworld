@@ -47,6 +47,25 @@ public class NightWorld extends Site {
 
     public void drawSite(){
 
+        /*********** draw skybox **************/
+        if (skybox_indx == 0) {
+            // black background
+            parent.background(0);
+        } else if (skybox_indx == 1) {
+            // white background
+            parent.background(255);
+        } else if (skybox_indx == 2) {
+            //
+            parent.background(22,0,15);
+//            parent.pushMatrix();
+//            parent.translate(cam.curr.loc.x,cam.curr.loc.y,cam.curr.loc.z);
+//            for (int i = -10; i < 22; i++) {
+//                parent.stroke(255);
+//                parent.line(((float) i)*1000,-10000,-8000,((float) i)*1000,10000,-8000);
+//            }
+//            parent.popMatrix();
+        }
+
         /*********** draw origin **************/
         parent.pushMatrix();
         parent.translate(25,0,0);
@@ -77,23 +96,9 @@ public class NightWorld extends Site {
 
     public int updateCam(Cam cam, int state, boolean[] keys_pressed, boolean[] keys_toggled){
 
-        /*********** draw skybox **************/
-        if (skybox_indx == 0) {
-            // black background
-            parent.background(0);
-        } else if (skybox_indx == 1) {
-            // white background
-            parent.background(255);
-        } else if (skybox_indx == 2) {
-            //
-            parent.background(22,0,15);
-//            parent.pushMatrix();
-//            parent.translate(cam.curr.loc.x,cam.curr.loc.y,cam.curr.loc.z);
-//            for (int i = -10; i < 22; i++) {
-//                parent.stroke(255);
-//                parent.line(((float) i)*1000,-10000,-8000,((float) i)*1000,10000,-8000);
-//            }
-//            parent.popMatrix();
+        // camera presets
+        if (state == 0) { // reset mode
+            state = cam.smoothLinPursuit(init,reset_frames,0,1); // calling state, return state
         }
 
         return state;

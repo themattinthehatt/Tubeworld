@@ -346,8 +346,13 @@ public class Cam {
 			return return_state;
 		}
 	}
-  
-  
+
+	public void moveToPosition(CamParam dest) {
+	/* move from curr dir/loc/sc/down vector to dest dir/loc/sc/down vector instantly
+	 */
+	}
+
+
 	/********************************* HELPER FUNCTIONS ****************************************/
 	public float getRadius(PVector center, PVector vec){
 		update.loc = PVector.sub(vec,center,update.loc);          // vector away center
