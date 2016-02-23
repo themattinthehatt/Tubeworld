@@ -5,6 +5,7 @@ import core.CamParam;
 import core.Site;
 import processing.core.PApplet;
 import processing.core.PVector;
+import java.awt.event.KeyEvent;
 
 public class NightWorld extends Site {
 
@@ -20,7 +21,6 @@ public class NightWorld extends Site {
     boolean toggle_off;
     boolean skybox_switch;
 
-
     public NightWorld(PApplet parent_, PVector origin_, float render_radius_, CamParam init_, float reset_frames_){
         // pass arguments to parent constructor
         super(parent_,origin_,render_radius_,init_,reset_frames_);
@@ -32,9 +32,9 @@ public class NightWorld extends Site {
 
     public void updatePhysics(boolean[] keys_pressed, boolean[] keys_toggled){
         // update background through shift+tab
-        if (keys_pressed[14] && keys_pressed[9]) {
+        if (keys_pressed[KeyEvent.VK_SHIFT] && keys_pressed[KeyEvent.VK_TAB]) {
             toggle_off = false;
-        } else if (!keys_pressed[9] && !toggle_off) {
+        } else if (!keys_pressed[KeyEvent.VK_TAB] && !toggle_off) {
             skybox_switch = true;
         }
 

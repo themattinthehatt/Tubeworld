@@ -3,13 +3,9 @@ package tower;
 import core.Cam;
 import core.CamParam;
 import core.Site;
-
 import processing.core.PApplet;
 import processing.core.PVector;
-
-/* TODO
- *
- */
+import java.awt.event.KeyEvent;
 
 public class Tower extends Site {
 	
@@ -161,7 +157,7 @@ public class Tower extends Site {
 	public void updatePhysics(boolean [] keys_pressed, boolean[] keys_toggled){
 		
 		// to see if updates should be paused
-		if (!keys_toggled[32]){
+		if (!keys_toggled[KeyEvent.VK_SPACE]){
 			// not paused; check current phase of updating - extending or paused at node
 			if (is_extending_beam){
 				if (fr_count < beam_extend_frames){
@@ -194,7 +190,7 @@ public class Tower extends Site {
 				top_level_extending--;
 			}
 		} // end paused check
-		if (keys_pressed[8]){
+		if (keys_pressed[KeyEvent.VK_BACK_SPACE]){
 			resetTower();
 		} 
 	}
@@ -559,19 +555,19 @@ public class Tower extends Site {
 				
 				// allow some amount of camera control; exit if other key press after initial reset
 				// update speed multipliers
-				if (keys_pressed[101]){
+				if (keys_pressed[KeyEvent.VK_E]){
 					if (dir_mult > 2){--dir_mult;}
 				}
-				if (keys_pressed[114]) {
+				if (keys_pressed[KeyEvent.VK_R]) {
 					if (dir_mult < 256){++dir_mult;}
 				}
-				if (keys_pressed[2]) { // move forward (inward)
+				if (keys_pressed[KeyEvent.VK_UP]) { // move forward (inward)
 					cam.moveForward(dir_mult);
 				}
-				if (keys_pressed[3]) { // move backward (outward)
+				if (keys_pressed[KeyEvent.VK_DOWN]) { // move backward (outward)
 					cam.moveBackward(dir_mult);
 				} 
-				if (keys_pressed[49]) { // return to state 1
+				if (keys_pressed[KeyEvent.VK_1]) { // return to state 1
 					state = 1;
 					cam_fr_count = 0;
 				} // if keyPressed 

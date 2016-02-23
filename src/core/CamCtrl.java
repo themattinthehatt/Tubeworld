@@ -5,6 +5,7 @@
 
 package core;
 import processing.core.PApplet;
+import java.awt.event.KeyEvent;
 
 public class CamCtrl {
   
@@ -43,84 +44,83 @@ public class CamCtrl {
 		if (state == 1) { // free viewing setting
 
 			// update speed multipliers
-			if (keys_pressed[101]){ 
+			if (keys_pressed[KeyEvent.VK_E]){
 				if (dir_mult > 2){
 					--dir_mult;
 				}
 			}
-			if (keys_pressed[114]) {
+			if (keys_pressed[KeyEvent.VK_R]) {
 				if (dir_mult < 256){
 					++dir_mult;
 				}
 			}
-			if (keys_pressed[116]) {
+			if (keys_pressed[KeyEvent.VK_T]) {
 				rot_rad = rot_rad*((float) 0.99);
 			}
-			if (keys_pressed[121]) {
-				rot_rad = rot_rad*((float) 1.01); 
+			if (keys_pressed[KeyEvent.VK_Y]) {
+				rot_rad = rot_rad*((float) 1.01);
 			}
-        
+
 			/**************** DISPLACEMENTS **********************/
-			if (keys_pressed[2]) { 
-				if (keys_pressed[14]) { // move up
+			if (keys_pressed[KeyEvent.VK_UP]) {
+				if (keys_pressed[KeyEvent.VK_SHIFT]) { // move up
 					cam.moveUpward(dir_mult);
 				} else {             	// move forward
 					cam.moveForward(dir_mult);
 				}
 			}
-			if (keys_pressed[3]) { 
-				if (keys_pressed[14]) { // move down
+			if (keys_pressed[KeyEvent.VK_DOWN]) {
+				if (keys_pressed[KeyEvent.VK_SHIFT]) { // move down
 					cam.moveDownward(dir_mult);
 				} else { 				// move backward
 					cam.moveBackward(dir_mult);
 				}
 			}
-			if (keys_pressed[0]) { // pan left
+			if (keys_pressed[KeyEvent.VK_LEFT]) { // pan left
 				cam.panLeft(dir_mult);
 			}
-			if (keys_pressed[1]) { // pan right
+			if (keys_pressed[KeyEvent.VK_RIGHT]) { // pan right
 				cam.panRight(dir_mult);
 			}
-        
+
 			/***************** ROTATIONS ***********************/
-			if (keys_pressed[97]) { // rotate left
+			if (keys_pressed[KeyEvent.VK_A]) { // rotate left
 				cam.rotLeft(rot_rad);
 			}
-			if (keys_pressed[100]) { // rotate right
+			if (keys_pressed[KeyEvent.VK_D]) { // rotate right
 				cam.rotRight(rot_rad);
-			} 
-			if (keys_pressed[119]) { // rotate up
+			}
+			if (keys_pressed[KeyEvent.VK_W]) { // rotate up
 				cam.rotUp(rot_rad);
 			}
-			if (keys_pressed[115]) { // rotate down
-				cam.rotDown(rot_rad);          
+			if (keys_pressed[KeyEvent.VK_S]) { // rotate down
+				cam.rotDown(rot_rad);
 			}
-			if (keys_pressed[122]) { // rotate ccw
+			if (keys_pressed[KeyEvent.VK_Z]) { // rotate ccw
 				cam.rotCCW(rot_rad);
-			}	
-			if (keys_pressed[120]) { // rotate cw
+			}
+			if (keys_pressed[KeyEvent.VK_X]) { // rotate cw
 				cam.rotCW(rot_rad);
 			}
-        
+
 			/******************* PRESETS ***************************/
-			if (keys_pressed[49]) { // do nothing
+			if (keys_pressed[KeyEvent.VK_1] && !keys_pressed[KeyEvent.VK_SHIFT]) { // do nothing
 				state = 1;
 			}
-			if (keys_pressed[48]) { // reset camera position
+			if (keys_pressed[KeyEvent.VK_0] && !keys_pressed[KeyEvent.VK_SHIFT]) { // reset camera position
 				state = 0;           // begin reset on next frame draw
 				// clear keys_pressed
 				for (int i = 0; i < keys_pressed.length; i++) {
 					keys_pressed[i] = false;
 				}
 			}
-			if (keys_pressed[50]) { // preset 1
-				state = 2;           // begin reset on next frame draw  
+			if (keys_pressed[KeyEvent.VK_2] && !keys_pressed[KeyEvent.VK_SHIFT]) { // preset 1
+				state = 2;           // begin reset on next frame draw
 				// clear keys_pressed
 				for (int i = 0; i < keys_pressed.length; i++) {
 					keys_pressed[i] = false;
 				}
 			}
-        
 		} else { // custom animations
 			state = active_site.updateCam(cam,state,keys_pressed,keys_toggled); // cam object, calling state
 		} 

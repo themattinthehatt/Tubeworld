@@ -6,12 +6,12 @@ import core.KeyHandler;
 import core.Site;
 
 import nightworld.NightWorld;
-import recursivetower.RecursiveTower;
 import rgbhallway.RGBHallway;
 import glasscube.GlassCube;
 import mengersponge.MengerSponge;
 import tower.Tower;
 import metatower.MetaTower;
+import recursivetower.RecursiveTower;
 
 import java.awt.event.KeyEvent;
 
@@ -185,52 +185,52 @@ public class Tubeworld extends PApplet {
 		}
 
 		// return to site origins if shift+(0-9) key combo is pressed
-		if (key_handler.keys_pressed[41]){
+		if (key_handler.keys_pressed[KeyEvent.VK_SHIFT] && key_handler.keys_pressed[KeyEvent.VK_0]){
 			if (num_sites >= 1) {
 				cam_ctrl.state = 0;		// set state so that we do a smooth linear movement to init
 				active_site_indx = 0;	// set which site to reset to
 			}
-		} else if (key_handler.keys_pressed[33]){
+		} else if (key_handler.keys_pressed[KeyEvent.VK_SHIFT] && key_handler.keys_pressed[KeyEvent.VK_1]){
 			if (num_sites >= 2) {
 				cam_ctrl.state = 0;		// set state so that we do a smooth linear movement to init
 				active_site_indx = 1;	// set which site to reset to
 			}
-		} else if (key_handler.keys_pressed[64]){
+		} else if (key_handler.keys_pressed[KeyEvent.VK_SHIFT] && key_handler.keys_pressed[KeyEvent.VK_2]){
 			if (num_sites >= 3) {
 				cam_ctrl.state = 0;		// set state so that we do a smooth linear movement to init
 				active_site_indx = 2;	// set which site to reset to
 			}
-		} else if (key_handler.keys_pressed[35]){
+		} else if (key_handler.keys_pressed[KeyEvent.VK_SHIFT] && key_handler.keys_pressed[KeyEvent.VK_3]){
 			if (num_sites >= 4) {
 				cam_ctrl.state = 0;		// set state so that we do a smooth linear movement to init
 				active_site_indx = 3;	// set which site to reset to
 			}
-		} else if (key_handler.keys_pressed[36]){
+		} else if (key_handler.keys_pressed[KeyEvent.VK_SHIFT] && key_handler.keys_pressed[KeyEvent.VK_4]){
 			if (num_sites >= 5) {
 				cam_ctrl.state = 0;		// set state so that we do a smooth linear movement to init
 				active_site_indx = 4;	// set which site to reset to
 			}
-		} else if (key_handler.keys_pressed[37]){
+		} else if (key_handler.keys_pressed[KeyEvent.VK_SHIFT] && key_handler.keys_pressed[KeyEvent.VK_5]){
 			if (num_sites >= 6) {
 				cam_ctrl.state = 0;		// set state so that we do a smooth linear movement to init
 				active_site_indx = 5;	// set which site to reset to
 			}
-		} else if (key_handler.keys_pressed[94]){
+		} else if (key_handler.keys_pressed[KeyEvent.VK_SHIFT] && key_handler.keys_pressed[KeyEvent.VK_6]){
 			if (num_sites >= 7) {
 				cam_ctrl.state = 0;		// set state so that we do a smooth linear movement to init
 				active_site_indx = 6;	// set which site to reset to
 			}
-		} else if (key_handler.keys_pressed[38]){
+		} else if (key_handler.keys_pressed[KeyEvent.VK_SHIFT] && key_handler.keys_pressed[KeyEvent.VK_7]){
 			if (num_sites >= 8) {
 				cam_ctrl.state = 0;		// set state so that we do a smooth linear movement to init
 				active_site_indx = 7;	// set which site to reset to
 			}
-		} else if (key_handler.keys_pressed[42]){
+		} else if (key_handler.keys_pressed[KeyEvent.VK_SHIFT] && key_handler.keys_pressed[KeyEvent.VK_8]){
 			if (num_sites >= 9) {
 				cam_ctrl.state = 0;		// set state so that we do a smooth linear movement to init
 				active_site_indx = 8;	// set which site to reset to
 			}
-		} else if (key_handler.keys_pressed[40]){
+		} else if (key_handler.keys_pressed[KeyEvent.VK_SHIFT] && key_handler.keys_pressed[KeyEvent.VK_9]){
 			if (num_sites >= 10) {
 				cam_ctrl.state = 0;		// set state so that we do a smooth linear movement to init
 				active_site_indx = 9;	// set which site to reset to

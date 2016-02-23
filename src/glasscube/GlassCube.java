@@ -5,6 +5,7 @@ import core.CamParam;
 import core.Site;
 import processing.core.PApplet;
 import processing.core.PVector;
+import java.awt.event.KeyEvent;
 
 public class GlassCube extends Site {
   
@@ -36,7 +37,7 @@ public class GlassCube extends Site {
 	
 	/************************************ UPDATE PHYSICS ************************************/
 	public void updatePhysics(boolean[] keys_pressed, boolean[] keys_toggled){
-		if (!keys_toggled[32]){ // if not paused
+		if (!keys_toggled[KeyEvent.VK_SPACE]){ // if not paused
 			for (int i = 0; i < num_cubes; i++){
 				cubes[i].updatePos();
 				cubes[i].detectBoundaries();
@@ -84,31 +85,31 @@ public class GlassCube extends Site {
 				
 				// allow some amount of camera control; exit if other key press after initial reset
 				// update speed multipliers
-				if (key_pressed[101]){ 
+				if (key_pressed[KeyEvent.VK_E]){
 					if (dir_mult > 2){--dir_mult;}
 				}
-				if (key_pressed[114]) {
+				if (key_pressed[KeyEvent.VK_R]) {
 					if (dir_mult < 256){++dir_mult;}
 				}
-				if (key_pressed[116]) {
+				if (key_pressed[KeyEvent.VK_T]) {
 					rot_rad = rot_rad*(0.99f);
 				}
-				if (key_pressed[121]) {
+				if (key_pressed[KeyEvent.VK_Y]) {
 					rot_rad = rot_rad*(1.01f);
 				}
-				if (key_pressed[2]) { // move forward (inward)
+				if (key_pressed[KeyEvent.VK_UP]) { // move forward (inward)
 					cam.moveForward(dir_mult);
 				}
-				if (key_pressed[3]) { // move backward (outward)
+				if (key_pressed[KeyEvent.VK_DOWN]) { // move backward (outward)
 					cam.moveBackward(dir_mult);
 				}
-				if (key_pressed[122]) { // rotate ccw
+				if (key_pressed[KeyEvent.VK_Z]) { // rotate ccw
 					cam.rotCCW(rot_rad);
 				}
-				if (key_pressed[120]) { // rotate cw
+				if (key_pressed[KeyEvent.VK_X]) { // rotate cw
 					cam.rotCW(rot_rad);
 				} 
-				if (key_pressed[49]){  // return to state 1
+				if (key_pressed[KeyEvent.VK_1]){  // return to state 1
 					state = 1;
 					fr_count = 0;
 				} // if keyPressed 

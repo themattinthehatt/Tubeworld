@@ -15,9 +15,22 @@
 
  0th order recursion Tower example, where links in the top RecursiveTower object are taken from the
  TowerBeam class:
+ sites[site_indx] = new RecursiveTower(this,new PVector(5000,5000,0), render_radius,
+            new CamParam(new PVector(0,0,-1),new PVector(6125,6125,1000),new PVector(6125,6125,0),new PVector(0,-1,0)),
+            reset_frames);
+ ((RecursiveTower) sites[site_indx]).reinitializeLinkType("RecursiveTower",3,3,5,3,96,0);
 
  1st order recursion Tower example, where links in the top RecursiveTower object are taken from the
  RecursiveTower class, and the links in those objects are taken from the TowerBeam class:
+ sites[site_indx] = new RecursiveTower(this,new PVector(5000,5000,0), render_radius,
+            new CamParam(new PVector(0,0,-1),new PVector(6125,6125,1000),new PVector(6125,6125,0),new PVector(0,-1,0)),
+            reset_frames);
+ ((RecursiveTower) sites[site_indx]).reinitializeLinkType("RecursiveTower",3,3,5,3,96,0);
+ Note that above, the object must be recast as a RecursiveTower type, since the Reference type of this
+ object is Site, but the Object type of this object is RecursiveTower. The compiler checks the class of
+ the reference type, and as such we can't use any methods from RecursiveTower that are not defined in the
+ Site abstract class without retyping the object. This is a bit of a kludge, but I've come up with no
+ better way around it yet.
  */
 
 /* TODO
@@ -33,9 +46,9 @@ package recursivetower;
 import core.Cam;
 import core.CamParam;
 import core.Site;
-
 import processing.core.PApplet;
 import processing.core.PVector;
+import java.awt.event.KeyEvent;
 
 public class RecursiveTower extends Site implements TowerLink {
 
@@ -130,19 +143,19 @@ public class RecursiveTower extends Site implements TowerLink {
 
         // link properties
         // good numbers for one level of recursion
-        num_links_x = 4;                        // length of x side in number of links
-        num_links_y = 4;                        // length of y side in number of links
-        num_links_z = 4;                        // length of z side in number of links
-        num_init_links = 3;                     // number of links to start with; num_max_links will be initialized
-        num_max_links = 64;                     // total number of links
+//        num_links_x = 4;                        // length of x side in number of links
+//        num_links_y = 4;                        // length of y side in number of links
+//        num_links_z = 4;                        // length of z side in number of links
+//        num_init_links = 3;                     // number of links to start with; num_max_links will be initialized
+//        num_max_links = 64;                     // total number of links
         // set update_type to 1, stopping_behavior to 1
 
         // good numbers for single tower
-//        num_links_x = 6;                        // length of x side in number of links
-//        num_links_y = 6;                        // length of y side in number of links
-//        num_links_z = 100;                      // length of z side in number of links
-//        num_init_links = 3;                     // number of links to start with; num_max_links will be initialized
-//        num_max_links = 256;                    // total number of links
+        num_links_x = 6;                        // length of x side in number of links
+        num_links_y = 6;                        // length of y side in number of links
+        num_links_z = 100;                      // length of z side in number of links
+        num_init_links = 3;                     // number of links to start with; num_max_links will be initialized
+        num_max_links = 256;                    // total number of links
         // set update_type to 0
 
 
@@ -322,7 +335,7 @@ public class RecursiveTower extends Site implements TowerLink {
      */
 
         // to see if updates should be paused
-        if (!keys_toggled[32]){
+        if (!keys_toggled[KeyEvent.VK_SPACE]){
 
             // Tubeworld dynamics not paused; check current phase of updating for each link - extending or paused at node
             for (int i = 0; i < curr_num_links; i++) {
@@ -384,7 +397,7 @@ public class RecursiveTower extends Site implements TowerLink {
             }
 
         } // end paused check
-        if (keys_pressed[8]){
+        if (keys_pressed[KeyEvent.VK_BACK_SPACE]){
             reset();
             // initialize TowerLink objects and link_locs
             boolean valid_indices = false;                  // local variable
@@ -501,19 +514,19 @@ public class RecursiveTower extends Site implements TowerLink {
 
                 // allow some amount of camera control; exit if other key press after initial reset
                 // update speed multipliers
-                if (keys_pressed[101]){
+                if (keys_pressed[KeyEvent.VK_E]){
                     if (dir_mult > 2){--dir_mult;}
                 }
-                if (keys_pressed[114]) {
+                if (keys_pressed[KeyEvent.VK_R]) {
                     if (dir_mult < 256){++dir_mult;}
                 }
-                if (keys_pressed[2]) { // move forward (inward)
+                if (keys_pressed[KeyEvent.VK_UP]) { // move forward (inward)
                     cam.moveForward(dir_mult);
                 }
-                if (keys_pressed[3]) { // move backward (outward)
+                if (keys_pressed[KeyEvent.VK_DOWN]) { // move backward (outward)
                     cam.moveBackward(dir_mult);
                 }
-                if (keys_pressed[49]) { // return to state 1
+                if (keys_pressed[KeyEvent.VK_1]) { // return to state 1
                     state = 1;
                     cam_fr_count = 0;
                 } // if keyPressed

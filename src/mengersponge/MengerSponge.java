@@ -5,10 +5,7 @@ import core.CamParam;
 import core.Site;
 import processing.core.PApplet;
 import processing.core.PVector;
-
-/* TODO
- * fix preset 2 to revolve around center rather than base
- */
+import java.awt.event.KeyEvent;
 
 public class MengerSponge extends Site {
 
@@ -183,31 +180,31 @@ public class MengerSponge extends Site {
 
 				// allow some amount of camera control; exit if other key press after initial reset
 				// update speed multipliers
-				if (keys_pressed[101]){
+				if (keys_pressed[KeyEvent.VK_E]){
 					if (dir_mult > 2){--dir_mult;}
 				}
-				if (keys_pressed[114]) {
+				if (keys_pressed[KeyEvent.VK_R]) {
 					if (dir_mult < 256){++dir_mult;}
 				}
-				if (keys_pressed[116]) {
+				if (keys_pressed[KeyEvent.VK_T]) {
 					rot_rad = rot_rad*(0.99f);
 				}
-				if (keys_pressed[121]) {
+				if (keys_pressed[KeyEvent.VK_Y]) {
 					rot_rad = rot_rad*(1.01f);
 				}
-				if (keys_pressed[2]) { // move forward (inward)
+				if (keys_pressed[KeyEvent.VK_UP]) { // move forward (inward)
 					cam.moveForward(dir_mult);
 				}
-				if (keys_pressed[3]) { // move backward (outward)
+				if (keys_pressed[KeyEvent.VK_DOWN]) { // move backward (outward)
 					cam.moveBackward(dir_mult);
 				}
-				if (keys_pressed[122]) { // rotate ccw
+				if (keys_pressed[KeyEvent.VK_Z]) { // rotate ccw
 					cam.rotCCW(rot_rad);
 				}
-				if (keys_pressed[120]) { // rotate cw
+				if (keys_pressed[KeyEvent.VK_X]) { // rotate cw
 					cam.rotCW(rot_rad);
 				}
-				if (keys_pressed[49]) { // return to state 1
+				if (keys_pressed[KeyEvent.VK_1]) { // return to state 1
 					state = 1;
 					fr_count = 0;
 				} // if keyPressed
