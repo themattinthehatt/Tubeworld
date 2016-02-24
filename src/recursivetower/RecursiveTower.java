@@ -37,8 +37,7 @@
 1. have junctions and inherit color from links; have links inherit color from junctions; need color property to be float[][],
    so it can hold colors of all constituent links, and these colors can be passed on if desired. The color passed on to the
    junction, again if desired, is [0][:]; this should happen in setLinkProperties
-2. fade colors
-3. interpolate colors
+2. interpolate colors
  */
 
 package recursivetower;
@@ -84,11 +83,8 @@ public class RecursiveTower extends Site implements TowerLink {
     public float[] color;                   // color of links in tower; used to denote color of first link that reaches max height
     public int[] rgb;                       // for storing rgb info
     public String color_scheme;             // "rgb", "hsv_random", "custom"
-    public boolean fade_colors;             // true to fade
-    public boolean interpolate_colors;      // true to move through hue space with hsv; false to stay at initial color
-    public float hue;                       // in [0 1]
-    public float saturation;                // in [0 1]
-    public float value;                     // in [0 1]
+    public boolean is_fading_color;         // true to fade
+    public boolean is_interpolated_color;   // true to move through hue space with hsv; false to stay at initial color
 
     // junction properties
     public int num_init_junctions;          // number of junctions to start with; max_num_junctions will be initialized
@@ -182,8 +178,8 @@ public class RecursiveTower extends Site implements TowerLink {
         color = new float[3];                   // default color to white
         color[0] = 0; color[1] = 0; color[2] = 1;
         color_scheme = "hsv";                   // "rgb", "hsv", "custom"
-        fade_colors = true;                     // true to fade
-        interpolate_colors = true;              // true to move through hue space with hsv; false to stay at initial color
+        is_fading_color = true;                 // true to fade
+        is_interpolated_color = true;           // true to move through hue space with hsv; false to stay at initial color
 
         // junction properties
         num_init_junctions = 0;                 // number of junctions to start with; num_max_junctions will be initialized
@@ -395,7 +391,6 @@ public class RecursiveTower extends Site implements TowerLink {
                 preset2_cam_pos.sc.z = preset2_cam_pos.sc.z + (link_len_z+link_len_x) / max_top_level_extend_frames;
                 top_level_extend_frames--;
             }
-
         } // end paused check
         if (keys_pressed[KeyEvent.VK_BACK_SPACE]){
             reset();
@@ -417,7 +412,8 @@ public class RecursiveTower extends Site implements TowerLink {
                             // location (at z = 1) should be marked as occupied
                             is_occupied[x][y][z] = true;
                             is_occupied[x][y][curr_level] = true;    // update collision array
-                            initializeNewLink(x, y, z, 4, RecursiveTower.assignInitColor(parent,i,color_scheme));
+                            float[] temp_color_0 = RecursiveTower.assignInitColor(parent,i,color_scheme);
+                            initializeNewLink(x,y,z,4,temp_color_0[0],temp_color_0[1],temp_color_0[2]);
                         }
                     }
                     valid_indices = false;   // reset valid_indices for next initial link
@@ -429,7 +425,7 @@ public class RecursiveTower extends Site implements TowerLink {
                     link_locs[i][3] = 0;     // cyrrent level is initially same as z-value
                 }
             }
-        }
+        } // reset
     }
 
     /************************************ DRAW SITE *****************************************/
@@ -585,7 +581,8 @@ public class RecursiveTower extends Site implements TowerLink {
                         // location (at z = 1) should be marked as occupied
                         is_occupied[x][y][z] = true;
                         is_occupied[x][y][curr_level] = true;	// update collision array
-                        initializeNewLink(x,y,z,4,RecursiveTower.assignInitColor(parent,i,color_scheme));
+                        float[] temp_color_0 = RecursiveTower.assignInitColor(parent,i,color_scheme);
+                        initializeNewLink(x,y,z,4,temp_color_0[0],temp_color_0[1],temp_color_0[2]);
                     }
                 }
                 valid_indices = false;   // reset valid_indices for next initial link
@@ -661,10 +658,34 @@ public class RecursiveTower extends Site implements TowerLink {
     }
 
     /************************************ SETTING METHODS ***********************************/
-    public void setColor(float[] color_) {
+    public void setColor(float hue, float saturation, float value) {
     /* this method sets the color property of the link object
      */
-        color = color_;
+        color[0] = hue;
+        color[1] = saturation;
+        color[2] = value;
+    }
+    public void decrementColor(float decrement_amount) {
+    /*
+    AS A METHOD IN THE RecursiveTower CLASS:
+    when decrementing the color of links, we really want to be decrementing the color of TowerBeam
+    objects; as such, this method falls through to the links in this tower, and on and on until
+    the decrementColor method in the TowerBeam class is called.
+
+    Calls: decrementColor
+    Called by: addLink
+    */
+        // fade colors if desired
+        if (is_fading_color) {
+            // loop through links and decrement value by an amount relative to number of links
+            for (int i = 0; i < curr_num_links; i++) {
+                links[i].decrementColor(1/((float) num_max_links));
+            }
+            // loop through junctions and decrement value by an amount relative to number of junctions
+            for (int i = 0; i < curr_num_junctions; i++) {
+                junctions[i].decrementColor(1/((float) num_max_links));
+            }
+        }
     }
 
     /************************************ RESET *********************************************/
@@ -748,8 +769,10 @@ public class RecursiveTower extends Site implements TowerLink {
         junctions[junctions_indx].y = ((float) link_locs[indx][1])*(link_len_z+link_len_y)+link_len_y/2;
         junctions[junctions_indx].z = ((float) link_locs[indx][2])*(link_len_z+link_len_x)-link_len_x/2;
         junctions[junctions_indx].tower_orientation = orientation;
-        junctions[junctions_indx].updateFillColor(links[indx].getColor());
-        junctions[junctions_indx].updateStrokeColor(links[indx].getColor());
+
+        float[] temp_color = links[indx].getColor();
+        junctions[junctions_indx].updateFillColor(temp_color[0],temp_color[1],1);   // full value
+        junctions[junctions_indx].updateStrokeColor(temp_color[0],temp_color[1],1); // full value
 
     }
 
@@ -774,6 +797,18 @@ public class RecursiveTower extends Site implements TowerLink {
 		 * to continue updating on the level below; updating the top_level after all link updates will
 		 * force the upwards move of new links on next iteration
 		 */
+
+        // fade colors if desired
+        if (is_fading_color) {
+            // loop through links and decrement value by an amount relative to number of links
+            for (int i = 0; i < curr_num_links; i++) {
+                links[i].decrementColor(1/((float) num_max_links));
+            }
+            // loop through junctions and decrement value by an amount relative to number of junctions
+            for (int i = 0; i < curr_num_junctions; i++) {
+                junctions[i].decrementColor(1/((float) num_max_links));
+            }
+        }
 
         // store top level in a temp variable for later manipulation
         temp_top_level = top_level;
@@ -800,7 +835,8 @@ public class RecursiveTower extends Site implements TowerLink {
                     findVacantSpot(indx);                   // try again; location of indx was redefined in reinitializeLinkLocation
                 } else {
                     // girder can move upwards
-                    initializeNewLink(x,y,z,4,links[indx].getColor());				// add new link
+                    float[] temp_color_0 = links[indx].getColor();                              // get color of old link
+                    initializeNewLink(x,y,z,4,temp_color_0[0],temp_color_0[1],1);               // add new link with value = 1
                 }
             } else {
                 // randomly select new position to move to in same level
@@ -828,7 +864,8 @@ public class RecursiveTower extends Site implements TowerLink {
                     findVacantSpot(indx);                   // try again; location of indx was redefined in reinitializeLinkLocation
                 } else {
                     // girder can move upwards
-                    initializeNewLink(x,y,z,4,links[indx].getColor());				// add new link
+                    float[] temp_color_0 = links[indx].getColor();                              // get color of old link
+                    initializeNewLink(x,y,z,4,temp_color_0[0],temp_color_0[1],1);               // add new link with value = 1
                 }
             } else {
                 // girder is free to update normally
@@ -836,12 +873,12 @@ public class RecursiveTower extends Site implements TowerLink {
             }
 
         } // end update_type check
+
         if (temp_top_level != top_level) {
             // we've moved up; set flag so we can increase center for cam preset
             top_level_extend_frames = max_top_level_extend_frames;
         }
         top_level = temp_top_level; // finally update top_level
-
 
     }
 
@@ -911,7 +948,8 @@ public class RecursiveTower extends Site implements TowerLink {
 			*/
             if (curr_level == (temp_top_level+1) % num_levels) {
                 // link CAN move upwards because we're moving into an old logic layer
-                initializeNewLink(x,y,z,4,links[indx].getColor());				// add new link
+                float[] temp_color_0 = links[indx].getColor();                              // get color of old link
+                initializeNewLink(x,y,z,4,temp_color_0[0],temp_color_0[1],1);               // add new link with value = 1
 
                 // one level above temp_top_level, first link on this level
                 temp_top_level = curr_level;
@@ -931,7 +969,8 @@ public class RecursiveTower extends Site implements TowerLink {
                 findVacantSpot(indx);
             } else {
                 // [x][y][curr_level] is NOT occupied, and we're not moving into an old logic layer; move upwards
-                initializeNewLink(x,y,z,4,links[indx].getColor());				// add new link
+                float[] temp_color_0 = links[indx].getColor();                              // get color of old link
+                initializeNewLink(x,y,z,4,temp_color_0[0],temp_color_0[1],1);               // add new link with value = 1
             }
         } else {
             // at least one horizontal space is open
@@ -945,20 +984,21 @@ public class RecursiveTower extends Site implements TowerLink {
             // randomly update direction using random number and cumulative probabilities
             // note: need to addBeam before updating position due to the way updating is handled
             rand = parent.random(1);					// random number between 0 and 1
+            float[] temp_color_0 = links[indx].getColor();                                  // get color of old link
             if (rand < trans_probs[0]) {
-                initializeNewLink(x,y,z,0,links[indx].getColor());
+                initializeNewLink(x,y,z,0,temp_color_0[0],temp_color_0[1],1);               // add new link with value = 1
             } else if (rand < trans_probs[0]+trans_probs[1]){
-                initializeNewLink(x,y,z,1,links[indx].getColor());
+                initializeNewLink(x,y,z,1,temp_color_0[0],temp_color_0[1],1);               // add new link with value = 1
             } else if (rand < trans_probs[0]+trans_probs[1]+trans_probs[2]){
-                initializeNewLink(x,y,z,2,links[indx].getColor());
+                initializeNewLink(x,y,z,2,temp_color_0[0],temp_color_0[1],1);               // add new link with value = 1
             } else {
-                initializeNewLink(x,y,z,3,links[indx].getColor());
+                initializeNewLink(x,y,z,3,temp_color_0[0],temp_color_0[1],1);               // add new link with value = 1
             }
         }
     }
 
     /************************************ INITIALIZE NEW LINK *******************************/
-    public void initializeNewLink(int x, int y, int z, int orientation_, float[] color_) {
+    public void initializeNewLink(int x, int y, int z, int orientation_, float hue, float saturation, float value) {
     /*
     orientation_ is the orientation of the link wrt is_occupied, not the tower holding the link
 
@@ -1040,7 +1080,7 @@ public class RecursiveTower extends Site implements TowerLink {
                 is_occupied[x][y][curr_level] = true;	// update collision array
                 break;
         }
-        links[links_indx].setColor(color_);
+        links[links_indx].setColor(hue,saturation,value);
         links[links_indx].setLinkProperties(orig,orientation_,orientation);
 
     }
@@ -1174,7 +1214,8 @@ public class RecursiveTower extends Site implements TowerLink {
                             // location (at z = 1) should be marked as occupied
                             is_occupied[x][y][z] = true;
                             is_occupied[x][y][curr_level] = true;	// update collision array
-                            initializeNewLink(x,y,z,4,links[i].getColor());
+                            float[] temp_color_0 = RecursiveTower.assignInitColor(parent,i,color_scheme);
+                            initializeNewLink(x,y,z,4,temp_color_0[0],temp_color_0[1],temp_color_0[2]);
                         }
                     }
                     valid_indices = false;   // reset valid_indices for next initial link
@@ -1327,18 +1368,19 @@ public class RecursiveTower extends Site implements TowerLink {
         float[] hsv = {0, 0, 0};
         if (type.equals("rgb")) {
             if (i%3 == 0) {
-                hsv[0] = 0; hsv[1] = 1; hsv[2] = 1; return hsv;
+                hsv[0] = 0; hsv[1] = 1; hsv[2] = 1;
             } else if (i%3 == 1){
-                hsv[0] = 0.3333333f; hsv[1] = 1; hsv[2] = 1; return hsv;
+                hsv[0] = 0.3333333f; hsv[1] = 1; hsv[2] = 1;
             } else if (i%3 == 2){
-                hsv[0] = 0.6666667f; hsv[1] = 1; hsv[2] = 1; return hsv;
+                hsv[0] = 0.6666667f; hsv[1] = 1; hsv[2] = 1;
             } else
                 return hsv;
         } else if (type.equals("hsv")) {
-            hsv[0] = parent.random(1); hsv[1] = 1; hsv[2] = 1; return hsv;
+            hsv[0] = parent.random(1); hsv[1] = 1; hsv[2] = 1;
         } else {
-            return hsv;
+            hsv[0] = 0; hsv[1] = 0; hsv[2] = 0;
         }
+        return hsv;
 
     }
 

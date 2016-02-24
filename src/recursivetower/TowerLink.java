@@ -43,8 +43,12 @@ public interface TowerLink {
     /* this method returns the color property of the link
      */
 
-    void setColor(float[] color);
+    void setColor(float hue, float saturation, float value);
     /* this method sets the color property of the link object
+     */
+
+    void decrementColor(float decrement_amount);
+    /* this method decrements the color of the link object; used when is_fading_color is set to true
      */
 
     void reset();

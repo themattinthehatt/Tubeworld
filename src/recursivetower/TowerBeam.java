@@ -215,10 +215,18 @@ public class TowerBeam implements TowerLink {
         return color;
     }
 
-    public void setColor(float[] color_) {
+    public void setColor(float hue, float saturation, float value) {
     /* this method sets the color property of the link object
      */
-        color = color_;
+        color[0] = hue;
+        color[1] = saturation;
+        color[2] = value;
+    }
+
+    public void decrementColor(float decrement_amount) {
+    /* this method decrements the color of the link object; used when is_fading_color is set to true
+     */
+        color[2] -= decrement_amount; // index 2 is value in hsv
     }
 
     public void reset() {

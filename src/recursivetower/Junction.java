@@ -35,17 +35,33 @@ public class Junction {
         fill_color_inheritance_type = "inherit";
     }
 
-    public void updateFillColor(float[] color) {
+    public void updateFillColor(float hue, float saturation, float value) {
         if (fill_color_inheritance_type.equals("inherit")) {
-            fill_color = color;
+            fill_color[0] = hue;
+            fill_color[1] = saturation;
+            fill_color[2] = value;
         }
     }
 
-    public void updateStrokeColor(float[] color) {
+    public void updateStrokeColor(float hue, float saturation, float value) {
         if (stroke_color_inheritance_type.equals("inherit")) {
-            stroke_color = color;
+            stroke_color[0] = hue;
+            stroke_color[1] = saturation;
+            stroke_color[2] = value;
         }
     }
+
+    void decrementColor(float decrement_amount) {
+        // only decrement colors if they are inheriting their values from links (which will also be decrementing their
+        // color); if using "initial" color, do not decrement
+        if (stroke_color_inheritance_type.equals("inherit")) {
+            stroke_color[2] -= decrement_amount;    // index 2 is for value in hsv
+        }
+        if (fill_color_inheritance_type.equals("inherit")) {
+            fill_color[2] -= decrement_amount;      // index 2 is for value in hsv
+        }
+    }
+
 
     public void drawJunction() {
         parent.pushMatrix();
