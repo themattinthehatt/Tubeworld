@@ -39,12 +39,25 @@ public interface TowerLink {
     a link is still updating
      */
 
-    float[] getColor();
+    int getNumLinks();
+    /* this method returns the number of initial links in the tower
+     */
+
+    float[][] getColor();
     /* this method returns the color property of the link
      */
 
-    void setColor(float hue, float saturation, float value);
+    float[] getFinalColor();
+    /* this method returns the final color property of the link; this holds the color value of the
+       link that first reached the junction
+     */
+
+    void setColor(float[][] color);
     /* this method sets the color property of the link object
+     */
+
+    void setFinalColor(float[] color);
+    /* this method sets the final_color property of the link object
      */
 
     void decrementColor(float decrement_amount);

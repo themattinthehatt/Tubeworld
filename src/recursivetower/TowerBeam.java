@@ -11,7 +11,9 @@ public class TowerBeam implements TowerLink {
     public float temp_side_len;             // this is the changing length of the beam while it is updating
     public int orientation; 	            // 0 for updating along +x-axis, 1 for -x-axis, 2 for +y-axis, 3 for -y-axis, 4 for +z-axis
     public PVector origin; 		            // location of origin (corner) of beam; to draw, must add side_len/2 to 2 coordinates that beam is not moving along
-    public float[] color;		            // color of beam
+    public float hue;   		            // hue of beam
+    public float saturation;	            // saturation of beam
+    public float value;                     // value of beam
 
     public float beam_extend_frames;        // number of frames needed for extension of beam
     public float beam_pause_frames;         // number of frames paused during beam extensions
@@ -19,13 +21,16 @@ public class TowerBeam implements TowerLink {
     public float updates_count;             // counter on number of updates; flags change in dynamics stopped
     public int tower_orientation;           // orientation of tower which beam is a part of; influences drawSite
 
-    public TowerBeam(PApplet parent_, float side_width_, float side_len_, int orientation_, PVector origin_, float[] color_, int tower_orientation_){
+    public TowerBeam(PApplet parent_, float side_width_, float side_len_, int orientation_, PVector origin_,
+                     float hue_, float saturation_, float value_, int tower_orientation_){
         parent = parent_;
         side_width = side_width_;
         side_len = side_len_; // beam will overlap nodes by half a side_width on each end
         orientation = orientation_;
         origin = origin_;
-        color = color_;
+        hue = hue_;
+        saturation = saturation_;
+        value = value_;
         tower_orientation = tower_orientation_;
 
         temp_side_len = 0;
@@ -83,7 +88,7 @@ public class TowerBeam implements TowerLink {
     is true of the naming for updatePhysics.
      */
 
-        int[] rgb = RecursiveTower.hsvToRgb(color[0], color[1], color[2]);
+        int[] rgb = RecursiveTower.hsvToRgb(hue, saturation, value);
         parent.stroke(rgb[0], rgb[1], rgb[2]);
         parent.fill(rgb[0], rgb[1], rgb[2]);
 
@@ -209,24 +214,50 @@ public class TowerBeam implements TowerLink {
         return dynamics_stopped;
     }
 
-    public float[] getColor() {
+    public int getNumLinks() {
+    /* this method returns the number of initial links in the tower
+     */
+        return 1;
+    }
+
+    public float[][] getColor() {
     /* this method returns the color property of the link
      */
+        float[][] color = new float[1][3];
+        color[0][0] = hue;
+        color[0][1] = saturation;
+        color[0][2] = value;
         return color;
     }
 
-    public void setColor(float hue, float saturation, float value) {
+    public float[] getFinalColor() {
+    /* this method returns the final color property of the link; this holds the color value of the
+       link that first reached the junction
+     */
+        float[] color = {hue, saturation, value};
+        return color;
+    }
+
+    public void setColor(float[][] color) {
     /* this method sets the color property of the link object
      */
-        color[0] = hue;
-        color[1] = saturation;
-        color[2] = value;
+        hue = color[0][0];
+        saturation = color[0][1];
+        value = 1;
+    }
+
+    public void setFinalColor(float[] color) {
+    /* this method sets the color property of the link object
+     */
+        hue = color[0];
+        saturation = color[1];
+        value = color[2];
     }
 
     public void decrementColor(float decrement_amount) {
     /* this method decrements the color of the link object; used when is_fading_color is set to true
      */
-        color[2] -= decrement_amount; // index 2 is value in hsv
+        value -= decrement_amount; // index 2 is value in hsv
     }
 
     public void reset() {

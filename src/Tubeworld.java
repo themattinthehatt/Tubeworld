@@ -37,7 +37,7 @@ public class Tubeworld extends PApplet {
 	}
 	
 	public void settings() {
-		  size(800, 800, "processing.opengl.PGraphics3D");
+		  size(1000, 800, "processing.opengl.PGraphics3D");
 //		size(800,600,"processing.opengl.OPENGL");
 	}
 	
@@ -143,7 +143,7 @@ public class Tubeworld extends PApplet {
 			sites[site_indx] = new RecursiveTower(this,new PVector(5000,5000,0), render_radius,
 					new CamParam(new PVector(0,0,-1),new PVector(6125,6125,1000),new PVector(6125,6125,0),new PVector(0,-1,0)), reset_frames);
 					// set up recursion
-//					((RecursiveTower) sites[site_indx]).reinitializeLinkType("RecursiveTower",3,3,5,3,96,0);
+					((RecursiveTower) sites[site_indx]).reinitializeLinkType("RecursiveTower",2,2,5,1,96,0);
 			site_indx++;
 			if (start_site.equals("recursivetower")){
 				cam_init.dir = new PVector(0,1,0);
