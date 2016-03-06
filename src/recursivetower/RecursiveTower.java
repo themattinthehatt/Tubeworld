@@ -33,11 +33,6 @@
  reinitializeLinkType method apply to the level BELOW the top level.
  */
 
-// TODO
-// get ryb hue values
-// take pic and update wiki! play with lighting for better depth resolution?
-
-
 package recursivetower;
 
 import core.Cam;
@@ -82,7 +77,7 @@ public class RecursiveTower extends Site implements TowerLink {
     public float[][] color;                 // color of links in tower
     public String color_init_type;          // method for updating 'color' property; "random" or "inherit"
     public int[] rgb;                       // for storing rgb info when converting from hsv
-    public String color_scheme;             // "rgb", "ryb", "hsv", "custom"
+    public String color_scheme;             // "rgb", "ryb", "cmy", "hsv", "custom"
     public String junction_color_inheritance_type; // set to "inherit" to inherit color from incoming beams
     public boolean is_fading_color;         // set to true to fade links as more links are added
     public boolean is_interpolated_color;   // true to move through hue space with hsv; false to stay at initial color

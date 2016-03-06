@@ -12,6 +12,7 @@ import mengersponge.MengerSponge;
 import tower.Tower;
 import metatower.MetaTower;
 import recursivetower.RecursiveTower;
+import colorcascade.ColorCascade;
 
 import java.awt.event.KeyEvent;
 
@@ -21,9 +22,12 @@ import java.awt.event.KeyEvent;
 
 public class Tubeworld extends PApplet {
 
+	// camera properties
 	public KeyHandler key_handler;
 	public CamParam cam_init;
 	public CamCtrl cam_ctrl;
+
+	// site properties
 	public Site[] sites;
 	public int num_sites;
 	public float[] dist_to_site;
@@ -51,17 +55,18 @@ public class Tubeworld extends PApplet {
 		boolean rgbhallway = true;
 		boolean glasscube = true;
 		boolean mengersponge = true;
-		boolean tower = false;
+		boolean tower = true;
 		boolean metatower = false;
 		boolean recursivetower = true;
-		String start_site = "recursivetower";
+		boolean colorcascade = true;
+		String start_site = "colorcascade";
 
 		// common input to constructors if desired
 		float render_radius = 10000; 	// distance beyond which site is not rendered
 		float reset_frames = 60;		// number of frames needed for reset (0 key press)
 
 		// initialize other variables
-		num_sites = 6;
+		num_sites = 8;
 		sites = new Site[num_sites];
 		dist_to_site = new float[num_sites];
 		active_site_indx = 0;
@@ -146,14 +151,27 @@ public class Tubeworld extends PApplet {
 					((RecursiveTower) sites[site_indx]).reinitializeLinkType("RecursiveTower",2,2,5,1,96,0);
 			site_indx++;
 			if (start_site.equals("recursivetower")){
-				cam_init.dir = new PVector(0,1,0);
-				cam_init.loc = new PVector(6125,6125,300);
-				cam_init.sc  = new PVector(6125,6125,300);
+				cam_init.dir = new PVector(0,0,-1);
+				cam_init.loc = new PVector(6125,6125,1000);
+				cam_init.sc  = new PVector(6125,6125,0);
+				cam_init.down = new PVector(0,-1,0);
+			}
+		}
+		if (colorcascade){
+			sites[site_indx] = new ColorCascade(this,new PVector(-5000,3000,0), render_radius,
+					new CamParam(new PVector(-1,0,0),new PVector(-4000,3000,1000),new PVector(-5000,3000,1000),new PVector(0,0,-1)), reset_frames);
+			site_indx++;
+			if (start_site.equals("colorcascade")){
+				cam_init.dir = new PVector(-1,0,0);
+				cam_init.loc = new PVector(-4000,3000,1000);
+				cam_init.sc  = new PVector(-5000,3000,1000);
 				cam_init.down = new PVector(0,0,-1);
 			}
 		}
-		num_sites = site_indx; // redefine num_sites to accurately reflect number of sites rendered
-		cam_ctrl = new CamCtrl(this,cam_init); // define initial camera site
+
+		num_sites = site_indx; 					// redefine num_sites to accurately reflect number of sites rendered
+		cam_ctrl = new CamCtrl(this,cam_init); 	// define initial camera site
+
 	}
 
 	public void draw(){

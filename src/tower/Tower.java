@@ -70,14 +70,14 @@ public class Tower extends Site {
 		super(parent_,origin_,render_radius_,init_,reset_frames_);
 		
 		// initialize tower structure properties
-		num_beams_x = 32;
-		num_beams_y = 18;
-		num_beams_z = 2; 		// total number of levels to draw
+		num_beams_x = 4;
+		num_beams_y = 4;
+		num_beams_z = 100; 		// total number of levels to draw
 		beam_side_width = 5; 	// (in pixels)
 		beam_side_len = 50;  	// (in pixels)
 		total_side_len_x = ((float) num_beams_x)*beam_side_len;
 		total_side_len_y = ((float) num_beams_y)*beam_side_len;
-		num_girders = 1;
+		num_girders = 3;
 		girder = new TowerGirder[num_girders];
 		tower_orientation = 4;
 		// reset parts of init to be at the center, given the number of beams
