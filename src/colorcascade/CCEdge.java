@@ -1,12 +1,13 @@
 /* possible types:
 line (easiest)
 cylinder
-rectanguloid
+box
  */
 
 package colorcascade;
 
 import processing.core.PApplet;
+import processing.core.PVector;
 
 public abstract class CCEdge {
 
@@ -19,17 +20,19 @@ public abstract class CCEdge {
 
         // copy properties from input
         parent = parent_;
+        parent_indxs = new int[2];
         parent_indxs[0] = parent_indx;
         parent_indxs[1] = child_indx;
 
         // set initial color to almost black
+        color = new int[3];
         color[0] = 20; color[1] = 20; color[2] = 20;
 
     }
 
-    public abstract void setColor(int[] color1, int[] color2);
+    public abstract void setColor(int[] parent_color, int[] child_color);
     // interpolate between two parent colors
 
-    public abstract void drawEdge(float[] point1, float[] point2);
+    public abstract void drawEdge(PVector parent_center, PVector child_center, int color_channel_id);
 
 }

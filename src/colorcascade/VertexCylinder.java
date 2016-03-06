@@ -27,7 +27,7 @@ public class VertexCylinder extends CCVertex {
     public VertexCylinder(PApplet parent_, int[] parent_indxs_, int[] child_indxs_, PVector origin_, PVector loc_,
                           float[] taus_, float radius_) {
 
-        // pass arguments to parent constructor (Site constructor); sets Site properties
+        // pass arguments to parent constructor (CCVertex constructor); sets CCVertex properties
         super(parent_, parent_indxs_, child_indxs_, origin_, loc_, taus_);
 
         // set size values
@@ -58,7 +58,7 @@ public class VertexCylinder extends CCVertex {
         color[0] = (int) (255*parent.noise(noise_offset,      (origin.y+loc.y)*0.002f, (origin.z+loc.z)*0.002f));
         color[1] = (int) (255*parent.noise(noise_offset+200f, (origin.y+loc.y)*0.002f, (origin.z+loc.z)*0.002f));
         color[2] = (int) (255*parent.noise(noise_offset+50f,  (origin.y+loc.y)*0.002f, (origin.z+loc.z)*0.002f));
-        noise_offset += 0.01;
+        noise_offset += 0.01; // controls changes in time
     }
 
 

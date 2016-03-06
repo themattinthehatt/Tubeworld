@@ -54,8 +54,8 @@ public class Tubeworld extends PApplet {
 		// define which sites to render
 		boolean rgbhallway = true;
 		boolean glasscube = true;
-		boolean mengersponge = true;
-		boolean tower = true;
+		boolean mengersponge = false;
+		boolean tower = false;
 		boolean metatower = false;
 		boolean recursivetower = true;
 		boolean colorcascade = true;

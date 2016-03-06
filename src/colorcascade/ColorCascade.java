@@ -75,19 +75,34 @@ public class ColorCascade extends Site {
         // construct graph
         num_vertices = num_rows*num_cols;
         vertices = new VertexCylinder[num_vertices];
+        num_edges = num_vertices;
+        edges = new EdgeRect[num_edges];
 
         int counter = 0;
         PVector vertex_origin;
         PVector vertex_loc;
         for (int i = 0; i < num_rows; i++) {
             for (int j = 0; j < num_cols; j++) {
-                int[] parent_indxs = {0, 1};
-                int[] child_indxs = {0, 1};
+                // set all edges for now
+                int[] parent_indxs = new int[1];
+                int[] child_indxs = new int[1];
+                if (counter != 0) {
+                    child_indxs[0] = counter - 1;
+                } else {
+                    child_indxs[0] = 0;
+                }
+                if (counter != num_vertices-1) {
+                    parent_indxs[0] = counter + 1;
+                } else {
+                    parent_indxs[0] = num_vertices-1;
+                }
+
                 vertex_origin = new PVector(origin.x, origin.y + ((float) j) * vertex_range,
                                             origin.z + ((float) i) * vertex_range );
                 vertex_loc = new PVector(0, 0, 0);
                 vertices[counter] = new VertexCylinder(parent, parent_indxs, child_indxs, vertex_origin, vertex_loc,
                                             taus, vertex_size);
+                edges[counter] = new EdgeRect(parent, parent_indxs[0], child_indxs[0]);
 
                 counter++;
             }
@@ -115,9 +130,15 @@ public class ColorCascade extends Site {
         // to see if updates should be paused
         if (!keys_toggled[KeyEvent.VK_SPACE]){
 
+            // update vertices
             for (int i = 0; i < num_vertices; i++) {
                 vertices[i].updatePosition();
                 vertices[i].updateColor();
+            }
+
+            // update edges
+            for (int i = 0; i < num_edges; i++) {
+                edges[i].setColor(vertices[edges[i].parent_indxs[0]].color,vertices[edges[i].parent_indxs[1]].color);
             }
 
         } // end paused check
@@ -146,6 +167,12 @@ public class ColorCascade extends Site {
         for (int i = 0; i < num_vertices; i++) {
             vertices[i].drawVertex(color_channel_id);
         }
+
+//        for (int i = 0; i < num_edges; i++) {
+//            edges[i].drawEdge(PVector.add(vertices[edges[i].parent_indxs[0]].origin, vertices[edges[i].parent_indxs[0]].loc),
+//                              PVector.add(vertices[edges[i].parent_indxs[1]].origin, vertices[edges[i].parent_indxs[1]].loc),
+//                              color_channel_id);
+//        }
 
     }
 
